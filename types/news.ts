@@ -5,6 +5,7 @@ export type NewsViewModel = {
 };
 
 export type NewsCommentModel = {
+    nickname: string;
     text: string;
     confirmed: boolean;
     creatorId: number;

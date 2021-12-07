@@ -1,6 +1,6 @@
 import React, { useContext, FC, useState } from "react";
 import { AppContext } from "../../context/Context";
-import { NewsCard } from "../../components/index";
+import { NewsCard, Container } from "../../components/index";
 import { NewsViewModel } from '../../types/news';
 import { ViewScroll } from "../../GlobalStyles";
 
@@ -45,11 +45,18 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
     ];
     const [news, setNews] = useState<NewsViewModel[]>(test);
 
+    
+    const pressHandler = (id: number) => {
+        navigation.navigate("NewsDetails", { id });
+    };
+
     return (
         <ViewScroll>
-            {news.map((i: NewsViewModel ) => (
-                <NewsCard data={i} key={Math.random() * 100} />
-            ))}
+            <Container>
+                {news.map((i: NewsViewModel ) => (
+                    <NewsCard pressHandler={pressHandler} data={i} key={Math.random() * 100} />
+                ))}
+            </Container>
         </ViewScroll>
     );
 }; 
