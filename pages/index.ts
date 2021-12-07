@@ -1,3 +1,4 @@
 import { NewsScreen } from "./News/NewsScreen";
+import { AuthScreen } from "./Auth/AuthScreen";
 
-export { NewsScreen, } 
+export { NewsScreen, AuthScreen };
