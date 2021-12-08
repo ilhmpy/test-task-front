@@ -5,15 +5,16 @@ type TextProps = {
     text?: boolean; 
     overflowNone?: boolean; 
     fs?: number;
+    mb?: number;
 };
 
 export const Text = styled.Text<TextProps>`
     font-weight: 400;
-    ${({ title, text, overflowNone, fs }) => {
+    ${({ title, text, overflowNone, fs, mb }) => {
         if (title) {
             return `
                 font-size: ${fs ? fs : 24}px;
-                margin-bottom: 10px;
+                margin-bottom: ${mb ? mb : 10}px;
             `;
         };
         if (text) {

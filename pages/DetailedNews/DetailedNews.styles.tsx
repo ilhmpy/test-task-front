@@ -27,28 +27,5 @@ export const Comment = styled.View`
 export const AddComment = styled.View`
     margin-top: 20px;
     width: 100%;
-`;
-
-export const Input = styled.TextInput`
-    width: 100%;
-    height: 50px;
-    border-color: #000;
-    border-width: 1px;
-    border-style: solid;
-    margin-bottom: 15px;
-    padding-left: 10px;
-    border-radius: 4px;
-    &::placeholder {
-        color: #000;
-    }
-`;
-
-export const Button = styled.Button`
-    width: 100%;
-    height: 50px;
-    border-width: 1px;
-    border-style: solid;
-    background-color: #1E6738;
-    border-radius: 4px;
-    margin-bottom: 15px;
+    margin-bottom: 200px;
 `;

@@ -1,25 +1,28 @@
 import React, { useState } from "react";
 import * as Style from "./DetailedNews.styles";
 import { ViewScroll } from "../../GlobalStyles";
-import { Text } from "../../components";
+import { Text, Input, Button2 as Button } from "../../components";
 import { NewsViewModel, NewsCommentModel } from "../../types/news";
+import { Regex } from '../../consts/regex';
 
 export const DetailedNews = ({ route }: any) => {
     const { id } = route.params;
     const [data, setData] = useState<NewsViewModel | undefined>({ 
         creatorId: 0, 
+        confirmed: true,
+        creationDate: new Date(),
         title: "Lorem ipsum dolor sit amet, consectetuer adipiscing", 
         description: "agnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim." 
     });
     const [comments, setComments] = useState<NewsCommentModel[] | undefined>([
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0 },
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date()},
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
+        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
     ]);
     const [nickname, setNickname] = useState<string | undefined>();
     const [email, setEmail] = useState<string | undefined>();
@@ -27,10 +30,6 @@ export const DetailedNews = ({ route }: any) => {
 
     const handleSend = () => {
         return undefined;
-    };
-
-    const changeText = (val: string, setState: (val: string) => void) => {
-        setState(val);
     };
 
     return (
@@ -48,25 +47,28 @@ export const DetailedNews = ({ route }: any) => {
                     </Style.Comment>
                 ))}
                 <Style.AddComment>
-                    <Style.Input 
-                        value={nickname}
-                        placeholder="Enter your nickname" 
-                        onChangeText={(e: string) => changeText(e, setNickname)} 
+                    <Input 
+                        placeholder="Enter your nickname"
+                        state={nickname}  
+                        setState={setNickname}
                     />
-                    <Style.Input 
-                        value={email} 
+                    <Input 
                         placeholder="Enter your email" 
-                        onChangeText={(e: string) => changeText(e, setNickname)} 
+                        state={email} 
+                        setState={setEmail}
+                        pattern={Regex.email}
                     />
-                    <Style.Input 
-                        value={comment} 
+                    <Input 
                         placeholder="Enter your comment" 
-                        onChangeText={(e: string) => changeText(e, setNickname)} 
+                        state={comment}
+                        setState={setComment}
                     />
-                    <Style.Button 
-                        title="Send" color="#000" 
+                    <Button 
+                        wd={"100%"}
                         onPress={handleSend} 
-                    />
+                    >
+                        SEND
+                    </Button>
                 </Style.AddComment>
             </Style.Block>
         </ViewScroll>
