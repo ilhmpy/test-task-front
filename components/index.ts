@@ -6,7 +6,7 @@ import { Input } from "./Input/Input";
 import { Button } from "./Button/Button";
 import { Search } from "./Search/Search";
 import { Select } from "./Select/Select";
-import { Button2 } from "./Button2/Button2";
+import { Button2, StateButton } from "./Button2/Button2";
 
 export { 
     NewsCard, 
@@ -18,4 +18,5 @@ export {
     Search,
     Select,
     Button2,
+    StateButton,
 };

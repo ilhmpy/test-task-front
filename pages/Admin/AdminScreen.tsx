@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Text, Button2 as Button } from "../../components";
+import { Container, Text, StateButton } from "../../components";
 import { UsersViewModel, UsersRoles } from "../../types/users";
 import { ViewScroll } from "../../GlobalStyles";
 import { sortByDate } from "../../utils/sortByDate";
@@ -41,15 +41,16 @@ export const AdminScreen = () => {
                             <Text title fs={17}>Role: {roles[i.role]}.</Text>
                             <Text title fs={17}>Blocked: {i.blocked ? "Yes" : "No"}.</Text>
                         </Style.Texts>
-                        <Button 
-                            wd={180} bg={i.blocked ? "green" : "red"}
-                           
+                        <StateButton 
+                            bool={i.blocked}
                         >
                             {i.blocked ? "Un blocked" : "Blocked"}
-                        </Button>
-                        <Button
-                            wd={180} bg={i.confirmed ? "red" : "green"}
-                        >{i.confirmed ? "Un Confirmed" : "Confirmed"}</Button>
+                        </StateButton>
+                        <StateButton
+                            bool={!i.confirmed}
+                        >
+                            {i.confirmed ? "Un Confirmed" : "Confirmed"}
+                        </StateButton>
                     </Style.User>
                 ))}
             </Container>

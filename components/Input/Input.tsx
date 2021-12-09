@@ -17,17 +17,16 @@ export const Input = ({
     error = false, setError = (val: boolean) => undefined,
 }: InputProps) => {
     const changeText = (val: string) => {
-        if (pattern) {
-            if (val[0] === ".") {
-                return;
+        if (val.length > 0) {
+            if (pattern) {
+                if (val[0] === ".") {
+                    return;
+                };
+                const current = val.match(pattern);
+                setError(current == null);
             };
-            const current = val.match(pattern);
-            console.log(current);
-            setState(val);
-            setError(current == null);
-        } else {
-            setState(val);
         };
+        setState(val);
         onChange && onChange();
     };
     return (

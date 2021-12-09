@@ -10,6 +10,12 @@ type ButtonProps = {
     onPress?: () => void;
 };
 
+type StateButtonProps = { 
+    children: ReactNode;
+    onPress?: () => void;
+    bool: boolean;
+};
+
 export const Button2 = (props: ButtonProps) => {
     return (
         <Button {...props} onPress={props.onPress ? props.onPress : () => undefined}>
@@ -18,6 +24,19 @@ export const Button2 = (props: ButtonProps) => {
             </Text>
         </Button>
     );
+};
+
+export const StateButton = ({ onPress, bool, children }: StateButtonProps) => {
+    return (
+        <Button 
+            wd={180} bg={bool ? "green" : "red"}
+            onPress={onPress && onPress}
+        >
+            <Text>
+                {children}
+            </Text>
+        </Button>
+    )
 };
 
 const Text = styled(TextComponent)<{ cl?: string; }>`

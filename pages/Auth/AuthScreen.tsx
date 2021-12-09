@@ -6,6 +6,7 @@ import { Regex } from "../../consts/regex";
 export const AuthScreen = ({ navigation }: any) => {
     const [nickname, setNickname] = useState<string | undefined>();
     const [password, setPassword] = useState<string | undefined>();
+    const [error, setError] = useState<boolean>(false);
 
     const handleSend = () => {
         return undefined;
@@ -23,6 +24,8 @@ export const AuthScreen = ({ navigation }: any) => {
                 state={password}
                 setState={setPassword}  
                 pattern={Regex.password}
+                error={error}
+                setError={setError}
             />
             <Button wd="100%" onPress={handleSend}>SIGN IN</Button>
         </MarginContainer>

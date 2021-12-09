@@ -29,3 +29,10 @@ export const AddComment = styled.View`
     width: 100%;
     margin-bottom: 200px;
 `;
+
+export const Date = styled.Text`
+    margin-top: 10px;
+    font-size: 13px;
+    color: #ccc;
+    margin-bottom: 10px;
+`;
