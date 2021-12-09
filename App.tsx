@@ -3,6 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AppContext } from "./context/Context";
 import { Nav } from './components/index';
+import { URL } from './consts/port';
+import axios from 'axios';
+import { UsersViewModel } from './types/users';
 
 // screens
 import { 
@@ -14,13 +17,26 @@ import {
 const Stack = createStackNavigator(); 
 
 export default function App() {
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = useState<UsersViewModel| null>(null);
   const [nav, setNav] = useState<boolean>(false);
+  const [token, setToken] = useState<string | null>(null);
 
+  useEffect(() => { 
+    console.log(URL);
+      axios.get(`${URL}GetUser?token=${token}`)    
+      .then((res) => {
+        console.log("Context GetUser", res);
+        if (!res.data.hasOwnProperty("error")) {
+          setUser(res.data);
+        };
+      }) 
+      .catch((er) => console.error(er));   
+  }, []);
+  
   return (
     <>
       <AppContext.Provider value={{ 
-        user, 
+        user,  
       }}>
         <NavigationContainer> 
           <Nav nav={nav} setNav={setNav} />
