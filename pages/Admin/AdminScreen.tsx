@@ -36,7 +36,7 @@ export const AdminScreen = () => {
                     <Style.User key={Math.random() * 1000}>
                         <Style.Texts>
                             <Text title fs={17}>Nickname: {i.nickname}.</Text>
-                            <Text title fs={17}>Create date: {moment(i.creationDate).format("DD.MM.YYYY")}.</Text>
+                            <Text title fs={17}>Create date: {moment(i.creationDate).format("DD.MM.YYYY HH:MM")}.</Text>
                             <Text title fs={17}>Confirmed: {i.confirmed ? "Yes" : "No"}.</Text>
                             <Text title fs={17}>Role: {roles[i.role]}.</Text>
                             <Text title fs={17}>Blocked: {i.blocked ? "Yes" : "No"}.</Text>

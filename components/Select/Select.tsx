@@ -14,7 +14,7 @@ export const Select = ({ array, setState, state }: SelectProps) => {
 
     return (
         <SelectContainer>
-            <SelectVar select title fs={20} mb={50}>{state ? array[0] : array[1]}</SelectVar>
+            <SelectVar select title fs={20} mb={50}>{state === null ? "Nothing" : state ? array[0] : array[1]}</SelectVar>
             <SelectVars>
                 {array && array.map((i) => (
                     <SelectVar 

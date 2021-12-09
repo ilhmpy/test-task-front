@@ -7,17 +7,24 @@ type InputProps = {
     state: string | undefined;
     onChange?: () => void;
     pattern?: any;
+    error?: boolean;
+    setError?: (val: boolean) => void;
 };
 
-export const Input = ({ placeholder, setState, state, onChange, pattern }: InputProps) => {
+export const Input = ({ 
+    placeholder, setState, state, 
+    onChange, pattern, 
+    error = false, setError = (val: boolean) => undefined,
+}: InputProps) => {
     const changeText = (val: string) => {
         if (pattern) {
             if (val[0] === ".") {
                 return;
             };
-            const current = val.replace(pattern, "");
+            const current = val.match(pattern);
             console.log(current);
-            setState(current);
+            setState(val);
+            setError(current == null);
         } else {
             setState(val);
         };
@@ -25,17 +32,18 @@ export const Input = ({ placeholder, setState, state, onChange, pattern }: Input
     };
     return (
         <TextInput 
+            error={error}
             onChangeText={changeText} placeholder={placeholder} 
             value={state} 
         />
     );
 };
 
-const TextInput = styled.TextInput`
+const TextInput = styled.TextInput<{ error: boolean; }>`
     width: 100%;
     height: 50px;
     display: flex;
-    border-color: #000;
+    border-color: ${({ error }) => error ? "red" : "#000"};
     border-width: 1px;
     border-style: solid;
     margin-bottom: 15px;

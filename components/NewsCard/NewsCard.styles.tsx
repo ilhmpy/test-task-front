@@ -10,3 +10,9 @@ export const Card = styled.TouchableOpacity`
     border-radius: 3px;
     padding: 20px;
 `;   
+
+export const Date = styled.Text`
+    margin-top: 10px;
+    font-size: 13px;
+    color: #ccc;
+`;
