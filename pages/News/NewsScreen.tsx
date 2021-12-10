@@ -23,7 +23,7 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
         axios.get(`${URL}GetPosts`)
             .then((res) => {
                 console.log("GetPosts", res.data);
-                setNews(res.data); 
+                setNews(res.data);  
                 setDefaultNews(res.data);
             })
             .catch((err) => console.log(err))
@@ -39,7 +39,7 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
 
     const pressHandler = (id: number) => {
         navigation.navigate("NewsDetails", { id });
-    };
+    }; 
 
     return (
         <ViewScroll>
