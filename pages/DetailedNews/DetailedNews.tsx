@@ -1,37 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import * as Style from "./DetailedNews.styles";
 import { ViewScroll } from "../../GlobalStyles";
 import { Text, Input, Button2 as Button, StateButton } from "../../components";
 import { NewsViewModel, NewsCommentModel } from "../../types/news";
 import { Regex } from '../../consts/regex';
 import moment from "moment";
+import { AppContext } from "../../context/Context";
+import { UsersRoles } from "../../types/users";
+import axios from "axios";
+import { URL } from "../../consts/port";
 
 export const DetailedNews = ({ route }: any) => {
     const { id } = route.params;
-    const [data, setData] = useState<NewsViewModel | undefined>({ 
-        creatorId: 0, 
-        confirmed: true,
-        creationDate: new Date(),
-        title: "Lorem ipsum dolor sit amet, consectetuer adipiscing", 
-        description: "agnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim." 
-    });
-    const [comments, setComments] = useState<NewsCommentModel[] | undefined>([
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date()},
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
-        { nickname: "vladislav", text: "Nice post!", confirmed: false, creatorId: 0, creationDate: new Date() },
-        { nickname: "vladislav", text: "Nice post!", confirmed: true, creatorId: 0, creationDate: new Date() },
-    ]);
+    const { user } = useContext(AppContext);
+    const [data, setData] = useState<NewsViewModel | null>(null);
+    const [comments, setComments] = useState<NewsCommentModel[] | null>(null);
     const [nickname, setNickname] = useState<string | undefined>();
     const [email, setEmail] = useState<string | undefined>();
     const [comment, setComment] = useState<string | undefined>();
 
     const handleSend = () => {
         return undefined;
-    };
+    };  
+
+    useEffect(() => {
+        axios.get(`${URL}GetPosts?id=${id}`)
+            .then((res) => {
+                setData(res.data[0]);
+                setComments(res.data[0].comments);
+            })
+            .catch((err) => console.log(err));
+    }, []); 
 
     return (
         <ViewScroll>
@@ -41,7 +40,9 @@ export const DetailedNews = ({ route }: any) => {
                     <Text title>{data.title}</Text>
                     <Text text overflowNone>{data.description}</Text>
                     <Style.Date>{moment(data.creationDate).format("DD.MM.YYYY HH:MM")}.</Style.Date>
-                    <StateButton bool={!data.confirmed}>{data.confirmed ? "Un confirmed" : "Confirmed"}</StateButton>
+                    {user && user.role >= UsersRoles.Editor && (
+                        <StateButton bool={!data.confirmed}>{data.confirmed ? "Un confirmed" : "Confirmed"}</StateButton>
+                    )}
                   </>
                 )}
             </Style.Block>
@@ -52,7 +53,9 @@ export const DetailedNews = ({ route }: any) => {
                         <Text fs={20} title>{i.nickname}</Text>
                         <Text text fs={16}>{i.text}</Text>
                         <Style.Date>{moment(i.creationDate).format("DD.MM.YYYY HH:MM")}.</Style.Date>
-                        <StateButton bool={!i.confirmed}>{i.confirmed ? "Un show" : "Show"}</StateButton>
+                        {user && user.role >= UsersRoles.Editor && (                        
+                            <StateButton bool={!i.confirmed}>{i.confirmed ? "Un show" : "Show"}</StateButton>
+                        )}
                     </Style.Comment>
                 ))}
                 <Style.AddComment>

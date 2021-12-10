@@ -10,12 +10,12 @@ type NewsCardProps = {
 };
 
 export const NewsCard = ({ data, pressHandler }: NewsCardProps) => {
-    const { description, title, creatorId, creationDate } = data;
+    const { description, title, creationDate, creatorName, _id } = data;
     return (
-        <Style.Card onPress={() => pressHandler(creatorId)}>    
+        <Style.Card onPress={() => pressHandler(_id)}>    
             <Text title>{title}</Text>
             <Text text>{description}</Text>
-            <Style.Date>{moment(creationDate).format("DD.MM.YYYY HH:MM")}</Style.Date>
+            <Style.Date>{moment(creationDate).format("DD.MM.YYYY HH:MM")} Creater: {creatorName}</Style.Date>
         </Style.Card>
     );
 }; 

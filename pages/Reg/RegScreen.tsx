@@ -15,7 +15,7 @@ export const RegScreen = () => {
     const handleSend = () => {
         if (!error) {
             axios.post(`${URL}CreateUser`, {
-                nickname, password, creationDate: new Date()
+                nickname, password: password?.toLowerCase(), creationDate: new Date()
             }).then((res) => {
                 console.log(res); 
                 setSign(true);

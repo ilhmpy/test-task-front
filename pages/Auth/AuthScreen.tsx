@@ -15,7 +15,7 @@ export const AuthScreen = ({ navigation }: any) => {
 
     const handleSend = () => {
         if (!error) {
-            axios.post(`${URL}AuthUser`, { nickname, password })
+            axios.post(`${URL}AuthUser`, { nickname, passwordL: password?.toLowerCase() })
                 .then(async (res) => {
                     console.log("AuthUser", res.data.token);
                     if (!res.data.hasOwnProperty("error")) {

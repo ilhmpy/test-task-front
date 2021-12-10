@@ -6,22 +6,25 @@ import { URL } from "../../consts/port";
 import * as SecureStore from 'expo-secure-store';
 import { AppContext } from "../../context/Context";
 
-export const AddPost = () => {
+export const AddPost = (props: any) => {
     const [title, setTitle] = useState<string | null>(null);
-    const [text, setText] = useState<string | null>(null);
+    const [description, setDescription] = useState<string | null>(null);
     const { user } = useContext(AppContext);
 
     async function handleSend() {
-        const token = await SecureStore.getItemAsync("token") || null;
-        axios.post(`${URL}/InsertPost`, 
-            { token, post: { 
-                    title, text, creatorId: user.id, creatorName: user.nickname 
-                }
-            }).then((res) => {
-                console.log(res);
-            }).catch((e) => {
-                console.log(e);
-            });
+       if (description && title && description.length > 0 && title.length > 0) {
+            const token = await SecureStore.getItemAsync("token") || null;
+            axios.post(`${URL}InsertPost`, 
+                { token, post: { 
+                        title, description, creatorId: user.id, creatorName: user.nickname 
+                    } 
+                }).then((res) => {
+                    console.log(res);
+                    props?.setReload(true);
+                }).catch((e) => {
+                    console.log(e);
+                }); 
+       };
     };
 
     return (
@@ -35,8 +38,8 @@ export const AddPost = () => {
                 <Input 
                     editable
                     placeholder="Text"
-                    state={text}
-                    setState={setText}
+                    state={description}
+                    setState={setDescription}
                     props={{
                         multiline: true,
                         numberOfLines: 5,

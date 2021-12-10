@@ -39,7 +39,7 @@ export default function App() {
     })
     .finally(() => setReload(false));
   };    
- 
+  
   useEffect(() => {   
     GetAuth();     
   }, [reload]); 
