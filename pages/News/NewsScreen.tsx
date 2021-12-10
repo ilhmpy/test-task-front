@@ -1,8 +1,9 @@
 import React, { useContext, FC, useState, useEffect } from "react";
 import { AppContext } from "../../context/Context";
-import { NewsCard, Container, Search } from "../../components";
+import { NewsCard, Container, Search, AddPost } from "../../components";
 import { NewsViewModel } from '../../types/news';
 import { ViewScroll } from "../../GlobalStyles";
+import { UsersRoles } from "../../types/users";
 
 type NewsScreenProps = {
     navigation: any; 
@@ -69,7 +70,7 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
             setNews(defaultNews);
             setClear(false);
         };
-    }, [clear]);
+    }, [clear]); 
 
     const pressHandler = (id: number) => {
         navigation.navigate("NewsDetails", { id });
@@ -78,7 +79,12 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
     return (
         <ViewScroll>
             <Container>
-                <Search defaultArray={defaultNews} setClear={setClear} state={news} setState={setNews} />
+                {user && user.role === UsersRoles.Admin && (
+                    <Search defaultArray={defaultNews} setClear={setClear} state={news} setState={setNews} />
+                )}
+                {user && user.role >= UsersRoles.Editor && (
+                    <AddPost />
+                )}
                 {news && news.map((i: NewsViewModel ) => (
                     <NewsCard pressHandler={pressHandler} data={i} key={Math.random() * 100} />
                 ))}

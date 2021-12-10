@@ -1,9 +1,11 @@
 export type NewsViewModel = {
     creatorId: number;
+    creatorName: string;
     title: string;
     description: string;
     creationDate: Date;
     confirmed: boolean;
+    comments: NewsCommentModel[];
 };
 
 export type NewsCommentModel = {

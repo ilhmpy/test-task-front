@@ -4,17 +4,20 @@ import React from "react";
 type InputProps = {
     placeholder: string;
     setState: (val: string) => void;
-    state: string | undefined;
+    state: string | null;
     onChange?: () => void;
     pattern?: any;
     error?: boolean;
     setError?: (val: boolean) => void;
+    editable?: boolean;
+    props?: any;
 };
 
 export const Input = ({ 
     placeholder, setState, state, 
-    onChange, pattern, 
+    onChange, pattern, editable, 
     error = false, setError = (val: boolean) => undefined,
+    props,
 }: InputProps) => {
     const changeText = (val: string) => {
         if (val.length > 0) {
@@ -29,16 +32,20 @@ export const Input = ({
         setState(val);
         onChange && onChange();
     };
+    
     return (
         <TextInput 
             error={error}
             onChangeText={changeText} placeholder={placeholder} 
             value={state} 
+            editable={editable}
+            edt={editable}
+            {...props}
         />
     );
 };
 
-const TextInput = styled.TextInput<{ error: boolean; }>`
+const TextInput = styled.TextInput<{ error: boolean; edt: boolean; }>`
     width: 100%;
     height: 50px;
     display: flex;
@@ -48,7 +55,7 @@ const TextInput = styled.TextInput<{ error: boolean; }>`
     margin-bottom: 15px;
     padding-left: 10px;
     border-radius: 4px;
-    &::placeholder {
-        color: #000;
-    }
+    ${({ edt }) => edt && `
+        min-height: 100px;
+    `}
 `;

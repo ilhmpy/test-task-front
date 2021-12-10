@@ -6,39 +6,51 @@ import { Nav } from './components/index';
 import { URL } from './consts/port';
 import axios from 'axios';
 import { UsersViewModel } from './types/users';
+import * as SecureStore from 'expo-secure-store';
 
 // screens
 import { 
   NewsScreen, AuthScreen, 
   DetailedNews, RegScreen,
   AdminScreen 
-} from "./pages/index";
-  
+} from "./pages/index"; 
+   
 const Stack = createStackNavigator(); 
 
 export default function App() {
-  const [user, setUser] = useState<UsersViewModel| null>(null);
+  const [user, setUser] = useState<UsersViewModel | null>(null);
   const [nav, setNav] = useState<boolean>(false);
-  const [token, setToken] = useState<string | null>(null);
+  const [reload, setReload] = useState<boolean>(false);
 
-  useEffect(() => { 
-    console.log(URL);
-      axios.get(`${URL}GetUser?token=${token}`)    
-      .then((res) => {
-        console.log("Context GetUser", res);
-        if (!res.data.hasOwnProperty("error")) {
-          setUser(res.data);
-        };
-      }) 
-      .catch((er) => console.error(er));   
-  }, []);
+  async function GetAuth() { 
+    const token = await SecureStore.getItemAsync("token") || null;
+    console.log("Token", token);
+    axios.get(`${URL}GetAuth?Token=${token}`)     
+    .then((res) => { 
+      console.log("Context GetAuth", res);
+      if (!res.data.hasOwnProperty("error")) {
+        setUser(res.data);
+      } else {
+        setUser(null);
+      };
+    })       
+    .catch((er) => {
+      console.error(er)
+    })
+    .finally(() => setReload(false));
+  };    
+ 
+  useEffect(() => {   
+    GetAuth();     
+  }, [reload]); 
   
   return (
     <>
       <AppContext.Provider value={{ 
-        user,  
+        user, 
+        setReload
       }}>
-        <NavigationContainer> 
+        <NavigationContainer>  
           <Nav nav={nav} setNav={setNav} />
           <Stack.Navigator>
             <Stack.Screen 

@@ -5,6 +5,7 @@ import { ViewScroll } from "../../GlobalStyles";
 import { sortByDate } from "../../utils/sortByDate";
 import * as Style from "./AdminScreen.styles";
 import moment from "moment";
+import { roles } from "../../consts/viewArrays";
 
 export const AdminScreen = () => {
     const [editors, setEditors] = useState<UsersViewModel[] | undefined>();
@@ -22,12 +23,6 @@ export const AdminScreen = () => {
         ]);
         setEditors(sort);
     }, []);
-
-    const roles = [
-        "User",
-        "Editor",
-        "Admin"
-    ];
 
     return (
         <ViewScroll>

@@ -19,3 +19,11 @@ export const Link = styled(LinkComponent)`
     text-transform: uppercase;
     font-weight: 700;
 `;
+
+export const Nickname = styled.Text`
+    color: #fff;
+    text-transform: uppercase;
+    position: absolute;
+    top: 35px;
+    font-size: 13px;
+`;
