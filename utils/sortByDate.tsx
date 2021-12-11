@@ -1,6 +1,3 @@
-import { NewsCommentModel, NewsViewModel } from "../types/news";
-import { UsersViewModel } from "../types/users";
-
 export function sortByDate(array: any[]) {
   return array.sort((x: any, y: any) => {
       const a = new Date(x.creationDate);

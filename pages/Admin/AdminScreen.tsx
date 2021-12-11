@@ -21,7 +21,7 @@ export const AdminScreen = () => {
             axios.get(`${URL}GetEditors?token=${token}`)
                 .then((res) => { 
                     console.log("GetEditors", res.data, token);
-                    setEditors(sortByDate(res.data));
+                    setEditors((sortByDate(res.data)).filter((i) => i.nickname != user.nickname));
                 }).catch((err) => console.log(err));
         };  
     };
@@ -30,11 +30,11 @@ export const AdminScreen = () => {
         GetEditors();
     }, []); 
 
-    function changeEditorsState(bool: boolean, id: string, type: string, idx: number) {
+    function changeEditorsState(bool: boolean, id: string, type: string, idx: number, data = {}) {
         editors?.forEach((i: any, idx: number) => {
             if (i._id === id) {
                 editors[idx] = type === "block" ? 
-                    { ...editors[idx], blocked: bool } : { ...editors[idx], confirmed: bool } ;
+                    { ...editors[idx], blocked: bool } : { ...editors[idx], confirmed: bool, ...data} ;
                 setEditors([...editors]); 
             }; 
         });
@@ -53,11 +53,12 @@ export const AdminScreen = () => {
     };
 
     async function changeEditorConfirmed(type: "block" | "confirm", bool: boolean, id: string, idx: number) {
+        console.log(bool);
         const token = await SecureStore.getItemAsync("token");
         if ((user?.role === UsersRoles.Admin) && token) {
             axios.post(`${URL}ChangeEditorConfirmed`, { type, bool, id, token })
             .then(() => {
-                changeEditorsState(bool, id, type, idx);
+                changeEditorsState(bool, id, type, idx, { role: bool ? UsersRoles.Editor : UsersRoles.User });
             }).catch((err) => {
                 console.log(err);
             });
@@ -67,7 +68,7 @@ export const AdminScreen = () => {
     return (
         <ViewScroll>
             <Container center pt={20}>
-                {editors && editors.map((i: any, idx) => (
+                {editors?.map((i: any, idx) => (
                     <Style.User key={Math.random() * 1000}>
                         <Style.Texts>
                             <Text title fs={17}>Nickname: {i.nickname}.</Text>
@@ -84,7 +85,7 @@ export const AdminScreen = () => {
                         </StateButton>
                         <StateButton
                             bool={!i.confirmed}
-                            onPress={() => changeEditorConfirmed("confirm", !i.blocked, i._id, idx)}
+                            onPress={() => changeEditorConfirmed("confirm", !i.confirmed, i._id, idx)}
                         >
                             {i.confirmed ? "Un Confirm" : "Confirm"}
                         </StateButton>
