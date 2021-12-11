@@ -36,7 +36,7 @@ export default function App() {
       };
     })       
     .catch((er) => {
-      console.error(er)
+      console.error(er) 
       setUser(null); 
     })
     .finally(() => setReload(false));
@@ -44,7 +44,7 @@ export default function App() {
 
   async function deleteToken() {
     await SecureStore.deleteItemAsync("token");
-  };
+  }; 
   
   useEffect(() => {   
     GetAuth();

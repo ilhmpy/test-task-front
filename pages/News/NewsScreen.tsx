@@ -24,8 +24,8 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
         axios.get(`${URL}GetNews`)
             .then((res) => {
                 console.log("GetNews", res.data);
-                const sort  =sortByDate(res.data)
-                if (user.role === UsersRoles.Editor) {
+                const sort = sortByDate(res.data)
+                if (user && user.role === UsersRoles.Editor) {
                     setNews(sort.filter((i) => i.creatorId == user.id));
                 } else {
                     setNews(sort);
@@ -62,7 +62,10 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
                     <AddPost setReload={setReloadNews} />
                 )}
                 {news && news.map((i: NewsViewModel ) => (
-                    <NewsCard confirmed={getConfirmed(i.confirmed, user)} pressHandler={pressHandler} data={i} key={Math.random() * 100} />
+                    <NewsCard 
+                        confirmed={getConfirmed(i.confirmed, user)} 
+                        pressHandler={pressHandler} data={i} key={Math.random() * 100} 
+                    />
                 ))}
             </Container>
         </ViewScroll>

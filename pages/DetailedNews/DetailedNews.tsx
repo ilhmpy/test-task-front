@@ -81,7 +81,7 @@ export const DetailedNews = ({ route, navigation }: any) => {
                 }).catch((err) => {
                     console.log(err);
                 });
-        };                                                                                                                                    
+        };                                                                                                                                     
     };
 
     async function handleCommentState(idx: number) {
@@ -99,7 +99,7 @@ export const DetailedNews = ({ route, navigation }: any) => {
                 }).catch((err) => {
                     console.log(err);
                 });
-        };
+        };  
     };
 
     return (
