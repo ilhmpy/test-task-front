@@ -21,6 +21,7 @@ export default function App() {
   const [user, setUser] = useState<UsersViewModel | null>(null);
   const [nav, setNav] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
+  const [reloadNews, setReloadNews] = useState<boolean>(false);
 
   async function GetAuth() { 
     const token = await SecureStore.getItemAsync("token") || null;
@@ -55,6 +56,8 @@ export default function App() {
         user, 
         setReload,
         reload,
+        reloadNews,
+        setReloadNews,
       }}>
         <NavigationContainer>  
           <Nav nav={nav} setNav={setNav} />

@@ -12,18 +12,19 @@ export const AuthScreen = ({ navigation }: any) => {
     const [nickname, setNickname] = useState<string | undefined>();
     const [password, setPassword] = useState<string | undefined>();
     const [error, setError] = useState<boolean>(false);
-    const { setReload } = useContext(AppContext);
+    const { setReload, setReloadNews } = useContext(AppContext);
 
     const handleSend = () => {
         if (!error) {
-            axios.post(`${URL}AuthUser`, { nickname, password: password?.toLowerCase() })
+            axios.post(`${URL}AuthUser`, { nickname: nickname?.toLowerCase(), password: password?.toLowerCase() })
                 .then(async (res) => {
                     console.log("AuthUser", res.data.token);
                     if (!res.data.hasOwnProperty("error")) {
                         await SecureStore.setItemAsync("token", res.data.token);
                         navigation.navigate("News");
                         setReload(true);
-                    };
+                        setReloadNews(true);
+                    }; 
                 })
                 .catch((e) => console.log(e));
         };

@@ -40,3 +40,10 @@ export const Date = styled.Text`
     color: #ccc;
     margin-bottom: 10px;
 `;
+
+export const View = styled.Text<{ view: boolean; }>`
+    font-size: 16px;
+    color: green;
+    margin-bottom: 10px;
+    display: ${({ view }) => view ? "flex" : "none"};
+`;

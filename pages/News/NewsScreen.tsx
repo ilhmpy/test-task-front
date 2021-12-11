@@ -11,27 +11,32 @@ import { getConfirmed } from "../../utils/getConfirmed";
 
 type NewsScreenProps = {
     navigation: any; 
-};
-
+};   
+ 
 export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
-    const { user } = useContext(AppContext);
+    const { user, reloadNews, setReloadNews } = useContext(AppContext);
     const [defaultNews, setDefaultNews] = useState<NewsViewModel[] | null>(null);
     const [news, setNews] = useState<NewsViewModel[] | null>(null);
-    const [clear, setClear] = useState<boolean>(false);
-    const [reload, setReload] = useState<boolean>(false);
-
-    console.log(navigation);
+    const [clear, setClear] = useState<boolean>(false); 
+    const [reload, setReload] = useState<boolean>(false);  
 
     useEffect(() => {
         axios.get(`${URL}GetNews`)
             .then((res) => {
                 console.log("GetNews", res.data);
-                setNews(sortByDate(res.data));  
+                const sort  =sortByDate(res.data)
+                if (user.role === UsersRoles.Editor) {
+                    setNews(sort.filter((i) => i.creatorId == user.id));
+                } else {
+                    setNews(sort);
+                };
                 setDefaultNews(res.data);
             })
             .catch((err) => console.log(err))
-            .finally(() => setReload(false));
-    }, [reload]);
+            .finally(() => {
+                setReloadNews(false);
+            });
+    }, [reloadNews]);
     
     useEffect(() => {
         if (clear) {    
@@ -54,7 +59,7 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
                     />
                 )}
                 {(user && user.role === UsersRoles.Editor && user.confirmed) && (
-                    <AddPost setReload={setReload} />
+                    <AddPost setReload={setReloadNews} />
                 )}
                 {news && news.map((i: NewsViewModel ) => (
                     <NewsCard confirmed={getConfirmed(i.confirmed, user)} pressHandler={pressHandler} data={i} key={Math.random() * 100} />

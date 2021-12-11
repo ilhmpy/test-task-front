@@ -12,14 +12,15 @@ import * as SecureStore from 'expo-secure-store';
 import { getLocalDate } from "../../utils/getLocalDate";
 import { getConfirmed } from "../../utils/getConfirmed";
 
-export const DetailedNews = ({ route }: any) => {
+export const DetailedNews = ({ route, navigation }: any) => {
     const { id } = route.params;
-    const { user } = useContext(AppContext);
+    const { user, setReloadNews } = useContext(AppContext);
     const [data, setData] = useState<NewsViewModel | null>(null);
     const [comments, setComments] = useState<NewsCommentModel[] | null>(null);
     const [nickname, setNickname] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
     const [text, setText] = useState<string | null>(null);
+    const [view, setView] = useState<boolean>(false);
 
     const handleSend = () => {
         if ((text && text.length > 0) && (email && email.length > 0) && (nickname && nickname.length > 0)) {
@@ -34,6 +35,8 @@ export const DetailedNews = ({ route }: any) => {
                 setNickname(null);
                 setEmail(null);
                 setText(null);
+                setView(true);
+                setReloadNews(true);
             }).catch((e) => console.log(e));
         };
     };  
@@ -42,10 +45,17 @@ export const DetailedNews = ({ route }: any) => {
         axios.get(`${URL}GetNews?id=${id}`)
             .then((res) => {
                 console.log("GetNewsById", res);
-                const data: NewsViewModel = res.data[0];
-                setData(data);
-                setComments(data.comments);
-            }).catch((err) => console.log(err));
+                if (res.data.length > 0) {      
+                    const data: NewsViewModel = res.data[0];          
+                    setData(data);
+                    setComments(data.comments);
+                } else {
+                    navigation.goBack();
+                };
+            }).catch((err) => {
+                console.log(err);
+                navigation.goBack();
+            });
     }, []); 
 
     async function changeNewsState(confirmed: boolean) {
@@ -55,6 +65,37 @@ export const DetailedNews = ({ route }: any) => {
                 .then((res) => {
                     console.log(res);
                     setData({ ...data, confirmed });
+                }).catch((err) => {
+                    console.log(err);
+                });
+        };
+    };
+
+    async function handleDelete() {
+        if (user.confirmed && user.role >= UsersRoles.Editor) {
+            const token = await SecureStore.getItemAsync("token");
+            axios.post(`${URL}DeleteNews`, { token, id })
+                .then((res) => {
+                    console.log(res);
+                    navigation.goBack();
+                }).catch((err) => {
+                    console.log(err);
+                });
+        };                                                                                                                                    
+    };
+
+    async function handleCommentState(idx: number) {
+        if ((user && user.confirmed) && (user.role >= UsersRoles.Editor)) {
+            console.log("yes");
+            const token = await SecureStore.getItemAsync("token");
+            axios.post(`${URL}ChangeCommentState`, { token, id, idx, confirmed: !(comments[idx].confirmed) })
+                .then((res) => {
+                    console.log(res);
+                    if (res.data) {
+                        console.log(res.data.comments[idx]);
+                        comments[idx] = res.data.comments[idx];
+                        setComments([...comments]);
+                    }; 
                 }).catch((err) => {
                     console.log(err);
                 });
@@ -77,23 +118,36 @@ export const DetailedNews = ({ route }: any) => {
                                 {data.confirmed ? "Un confirm" : "Confirm"}
                        </StateButton>
                     )}
+                    {(user && user.role >= UsersRoles.Editor && user.confirmed) && (
+                        <StateButton bool={false} onPress={handleDelete}>
+                            Delete
+                        </StateButton>
+                    )}
                   </>
                 )}
             </Style.Block>
             <Style.Block>
                 <Text title>Comments</Text>
-                {comments && comments.map((i) => (
-                    <Style.Comment view={getConfirmed(i.confirmed, user)} key={Math.random() * 1000}>
+                {comments && comments.map((i, idx) => (
+                    <Style.Comment 
+                        view={getConfirmed(i.confirmed, user)} key={Math.random() * 1000}
+                    >
                         <Text fs={20} title>{i.nickname}</Text>
                         <Text text fs={16}>{i.text}</Text>
                         <Style.Date>{getLocalDate(i.creationDate)}.</Style.Date>
                         {user && user.role >= UsersRoles.Editor && user.confirmed && (                        
-                            <StateButton bool={!i.confirmed}>{i.confirmed ? "Un show" : "Show"}</StateButton>
+                            <StateButton 
+                                onPress={() => handleCommentState(idx)}
+                                bool={!i.confirmed}
+                            >
+                                {i.confirmed ? "Un show" : "Show"}
+                            </StateButton>
                         )}
                     </Style.Comment>
                 ))}
                 {(!user || user.role === UsersRoles.User || !user.confirmed) && (
                     <Style.AddComment>
+                        <Style.View view={view}>Your comment under consideration by the admin</Style.View>
                         <Input 
                             placeholder="Enter your nickname"
                             state={nickname}  
