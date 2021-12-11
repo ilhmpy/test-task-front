@@ -6,6 +6,8 @@ import { ViewScroll } from "../../GlobalStyles";
 import { UsersRoles } from "../../types/users";
 import axios from "axios";
 import { URL } from "../../consts/port";
+import { sortByDate } from "../../utils/sortByDate";
+import { getConfirmed } from "../../utils/getConfirmed";
 
 type NewsScreenProps = {
     navigation: any; 
@@ -13,17 +15,18 @@ type NewsScreenProps = {
 
 export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
     const { user } = useContext(AppContext);
-    const testDate = new Date(2021, 11, 9);
     const [defaultNews, setDefaultNews] = useState<NewsViewModel[] | null>(null);
     const [news, setNews] = useState<NewsViewModel[] | null>(null);
     const [clear, setClear] = useState<boolean>(false);
     const [reload, setReload] = useState<boolean>(false);
 
+    console.log(navigation);
+
     useEffect(() => {
-        axios.get(`${URL}GetPosts`)
+        axios.get(`${URL}GetNews`)
             .then((res) => {
-                console.log("GetPosts", res.data);
-                setNews(res.data);  
+                console.log("GetNews", res.data);
+                setNews(sortByDate(res.data));  
                 setDefaultNews(res.data);
             })
             .catch((err) => console.log(err))
@@ -31,27 +34,30 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
     }, [reload]);
     
     useEffect(() => {
-        if (clear) {  
-            setNews(defaultNews);
+        if (clear) {    
+            setNews(defaultNews); 
             setClear(false);
         };
     }, [clear]); 
 
-    const pressHandler = (id: number) => {
+    const pressHandler = (id: number) => { 
         navigation.navigate("NewsDetails", { id });
     }; 
-
+   
     return (
         <ViewScroll>
             <Container>
-                {user && user.role === UsersRoles.Admin && (
-                    <Search defaultArray={defaultNews} setClear={setClear} state={news} setState={setNews} />
+                {(user && user.role === UsersRoles.Admin && user.confirmed) && (
+                    <Search 
+                        defaultArray={defaultNews} setClear={setClear} 
+                        state={news} setState={setNews} 
+                    />
                 )}
-                {user && user.role >= UsersRoles.Editor && (
+                {(user && user.role === UsersRoles.Editor && user.confirmed) && (
                     <AddPost setReload={setReload} />
                 )}
                 {news && news.map((i: NewsViewModel ) => (
-                    <NewsCard pressHandler={pressHandler} data={i} key={Math.random() * 100} />
+                    <NewsCard confirmed={getConfirmed(i.confirmed, user)} pressHandler={pressHandler} data={i} key={Math.random() * 100} />
                 ))}
             </Container>
         </ViewScroll>

@@ -28,27 +28,33 @@ export default function App() {
     axios.get(`${URL}GetAuth?Token=${token}`)     
     .then((res) => { 
       console.log("Context GetAuth", res);
-      if (!res.data.hasOwnProperty("error")) {
+      if (!res.data.hasOwnProperty("error") && res.data) {
         setUser(res.data);
-      } else {
-        setUser(null);
+      } else {  
+        setUser(null);       
       };
     })       
     .catch((er) => {
       console.error(er)
+      setUser(null); 
     })
     .finally(() => setReload(false));
   };    
+
+  async function deleteToken() {
+    await SecureStore.deleteItemAsync("token");
+  };
   
   useEffect(() => {   
-    GetAuth();     
+    GetAuth();
   }, [reload]); 
   
-  return (
+  return (  
     <>
       <AppContext.Provider value={{ 
         user, 
-        setReload
+        setReload,
+        reload,
       }}>
         <NavigationContainer>  
           <Nav nav={nav} setNav={setNav} />

@@ -2,20 +2,22 @@ import React from "react";
 import { NewsViewModel } from "../../types/news";
 import * as Style from "./NewsCard.styles";
 import { Text } from "../../components/index";
-import moment from "moment";
+import { getLocalDate } from "../../utils/getLocalDate";
 
 type NewsCardProps = {
     data: NewsViewModel;
     pressHandler: (id: number) => void;
+    confirmed: boolean;
 };
 
-export const NewsCard = ({ data, pressHandler }: NewsCardProps) => {
-    const { description, title, creationDate, creatorName, _id } = data;
+export const NewsCard = ({ data, pressHandler, confirmed }: NewsCardProps) => {
+    const { description, title, creationDate, creatorNickname, _id } = data;
+ 
     return (
-        <Style.Card onPress={() => pressHandler(_id)}>    
+        <Style.Card confirmed={confirmed} onPress={() => pressHandler(_id)}>    
             <Text title>{title}</Text>
             <Text text>{description}</Text>
-            <Style.Date>{moment(creationDate).format("DD.MM.YYYY HH:MM")} Creater: {creatorName}</Style.Date>
+            <Style.Date>{getLocalDate(creationDate)} Creater: {creatorNickname}</Style.Date>
         </Style.Card>
     );
 }; 

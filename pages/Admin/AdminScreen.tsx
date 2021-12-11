@@ -39,12 +39,12 @@ export const AdminScreen = () => {
                         <StateButton 
                             bool={i.blocked}
                         >
-                            {i.blocked ? "Un blocked" : "Blocked"}
+                            {i.blocked ? "Un block" : "Block"}
                         </StateButton>
                         <StateButton
                             bool={!i.confirmed}
                         >
-                            {i.confirmed ? "Un Confirmed" : "Confirmed"}
+                            {i.confirmed ? "Un Confirm" : "Confirm"}
                         </StateButton>
                     </Style.User>
                 ))}

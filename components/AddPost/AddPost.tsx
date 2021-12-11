@@ -5,6 +5,7 @@ import axios from "axios";
 import { URL } from "../../consts/port";
 import * as SecureStore from 'expo-secure-store';
 import { AppContext } from "../../context/Context";
+import moment from "moment";
 
 export const AddPost = (props: any) => {
     const [title, setTitle] = useState<string | null>(null);
@@ -14,11 +15,15 @@ export const AddPost = (props: any) => {
     async function handleSend() {
        if (description && title && description.length > 0 && title.length > 0) {
             const token = await SecureStore.getItemAsync("token") || null;
-            axios.post(`${URL}InsertPost`, 
+            const creationDate = new Date();
+            axios.post(`${URL}InsertNews`, 
                 { token, post: { 
-                        title, description, creatorId: user.id, creatorName: user.nickname 
+                        title, description, creatorId: user.id, creatorNickname: user.nickname,
+                        creationDate,
                     } 
                 }).then((res) => {
+                    setTitle(null);
+                    setDescription(null);
                     console.log(res);
                     props?.setReload(true);
                 }).catch((e) => {

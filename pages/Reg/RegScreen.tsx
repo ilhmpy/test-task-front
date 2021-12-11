@@ -4,7 +4,7 @@ import { Input, Button2 as Button } from "../../components";
 import { Regex } from "../../consts/regex";
 import axios from "axios";
 import { URL } from "../../consts/port";
-import * as SecureStore from 'expo-secure-store';
+import { ViewScroll } from "../../GlobalStyles";
 
 export const RegScreen = () => {
     const [nickname, setNickname] = useState<string | undefined>();
@@ -24,23 +24,25 @@ export const RegScreen = () => {
     };
 
     return (
-        <MarginContainer>
-            <Sign view={sign}>You sign up!</Sign>
-            <Input 
-                placeholder="Enter your nickname" 
-                state={nickname}
-                setState={setNickname}
-            />
-            <Input 
-                placeholder="Enter your password" 
-                state={password}
-                setState={setPassword}  
-                pattern={Regex.password}
-                error={error}
-                setError={setError}
-            />
-            <Button wd="100%" onPress={handleSend}>SIGN UP</Button>
-        </MarginContainer>
+        <ViewScroll>
+            <MarginContainer>
+                <Sign view={sign}>You sign up!</Sign>
+                <Input 
+                    placeholder="Enter your nickname" 
+                    state={nickname}
+                    setState={setNickname}
+                />
+                <Input 
+                    placeholder="Enter your password" 
+                    state={password}
+                    setState={setPassword}  
+                    pattern={Regex.password}
+                    error={error}
+                    setError={setError}
+                />
+                <Button wd="100%" onPress={handleSend}>SIGN UP</Button>
+            </MarginContainer>
+        </ViewScroll>
     )
 };
 

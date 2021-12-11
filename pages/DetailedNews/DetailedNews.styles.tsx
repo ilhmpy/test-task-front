@@ -13,7 +13,7 @@ export const Block = styled.View<{ first?: boolean; }>`
     `}
 `;
 
-export const Comment = styled.View`
+export const Comment = styled.View<{ view?: boolean; }>`
     width: 100%;
     min-height: 50px;
     padding-top: 10px;
@@ -22,6 +22,10 @@ export const Comment = styled.View`
     border-style: solid;
     border-color: #000;
     margin-bottom: 10px;
+    display: none;
+    ${({ view }) => view && `
+        display: flex;
+    `}
 `;
 
 export const AddComment = styled.View`

@@ -6,6 +6,7 @@ import { URL } from "../../consts/port";
 import { Regex } from "../../consts/regex";
 import { AppContext } from "../../context/Context";
 import * as SecureStore from 'expo-secure-store';
+import { ViewScroll } from "../../GlobalStyles";
 
 export const AuthScreen = ({ navigation }: any) => {
     const [nickname, setNickname] = useState<string | undefined>();
@@ -15,7 +16,7 @@ export const AuthScreen = ({ navigation }: any) => {
 
     const handleSend = () => {
         if (!error) {
-            axios.post(`${URL}AuthUser`, { nickname, passwordL: password?.toLowerCase() })
+            axios.post(`${URL}AuthUser`, { nickname, password: password?.toLowerCase() })
                 .then(async (res) => {
                     console.log("AuthUser", res.data.token);
                     if (!res.data.hasOwnProperty("error")) {
@@ -29,22 +30,24 @@ export const AuthScreen = ({ navigation }: any) => {
     };
 
     return (
-        <MarginContainer>
-            <Input 
-                placeholder="Enter your nickname" 
-                state={nickname}
-                setState={setNickname}
-            />
-            <Input 
-                placeholder="Enter your password" 
-                state={password}
-                setState={setPassword}  
-                pattern={Regex.password}
-                error={error}
-                setError={setError}
-            />
-            <Button wd="100%" onPress={handleSend}>SIGN IN</Button>
-        </MarginContainer>
+        <ViewScroll>
+            <MarginContainer>
+                <Input 
+                    placeholder="Enter your nickname" 
+                    state={nickname}
+                    setState={setNickname}
+                />
+                <Input 
+                    placeholder="Enter your password" 
+                    state={password}
+                    setState={setPassword}  
+                    pattern={Regex.password}
+                    error={error}
+                    setError={setError}
+                />
+                <Button wd="100%" onPress={handleSend}>SIGN IN</Button>
+            </MarginContainer>
+        </ViewScroll>
     )
 };
 

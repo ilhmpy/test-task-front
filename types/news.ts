@@ -1,7 +1,7 @@
 export type NewsViewModel = {
     _id?: string;
     creatorId: number;
-    creatorName: string;
+    creatorNickname: string;
     title: string;
     description: string;
     creationDate: Date;

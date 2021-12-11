@@ -4,33 +4,62 @@ import { ViewScroll } from "../../GlobalStyles";
 import { Text, Input, Button2 as Button, StateButton } from "../../components";
 import { NewsViewModel, NewsCommentModel } from "../../types/news";
 import { Regex } from '../../consts/regex';
-import moment from "moment";
 import { AppContext } from "../../context/Context";
 import { UsersRoles } from "../../types/users";
 import axios from "axios";
 import { URL } from "../../consts/port";
+import * as SecureStore from 'expo-secure-store';
+import { getLocalDate } from "../../utils/getLocalDate";
+import { getConfirmed } from "../../utils/getConfirmed";
 
 export const DetailedNews = ({ route }: any) => {
     const { id } = route.params;
     const { user } = useContext(AppContext);
     const [data, setData] = useState<NewsViewModel | null>(null);
     const [comments, setComments] = useState<NewsCommentModel[] | null>(null);
-    const [nickname, setNickname] = useState<string | undefined>();
-    const [email, setEmail] = useState<string | undefined>();
-    const [comment, setComment] = useState<string | undefined>();
+    const [nickname, setNickname] = useState<string | null>(null);
+    const [email, setEmail] = useState<string | null>(null);
+    const [text, setText] = useState<string | null>(null);
 
     const handleSend = () => {
-        return undefined;
+        if ((text && text.length > 0) && (email && email.length > 0) && (nickname && nickname.length > 0)) {
+            const creationDate = new Date();
+            const data = { 
+                text, email, nickname, newsId: id, 
+                creatorId: user ? user.id : null, creationDate
+            };
+            axios.post(`${URL}InsertComment`, data).then((res) => {
+                console.log(res);
+                setComments([...comments, data]);
+                setNickname(null);
+                setEmail(null);
+                setText(null);
+            }).catch((e) => console.log(e));
+        };
     };  
 
     useEffect(() => {
-        axios.get(`${URL}GetPosts?id=${id}`)
+        axios.get(`${URL}GetNews?id=${id}`)
             .then((res) => {
-                setData(res.data[0]);
-                setComments(res.data[0].comments);
-            })
-            .catch((err) => console.log(err));
+                console.log("GetNewsById", res);
+                const data: NewsViewModel = res.data[0];
+                setData(data);
+                setComments(data.comments);
+            }).catch((err) => console.log(err));
     }, []); 
+
+    async function changeNewsState(confirmed: boolean) {
+        if (user.confirmed && user.role === UsersRoles.Admin) {
+            const token = await SecureStore.getItemAsync("token");
+            axios.post(`${URL}ChangeNewsState`, { id, token, confirmed })
+                .then((res) => {
+                    console.log(res);
+                    setData({ ...data, confirmed });
+                }).catch((err) => {
+                    console.log(err);
+                });
+        };
+    };
 
     return (
         <ViewScroll>
@@ -39,9 +68,14 @@ export const DetailedNews = ({ route }: any) => {
                   <>
                     <Text title>{data.title}</Text>
                     <Text text overflowNone>{data.description}</Text>
-                    <Style.Date>{moment(data.creationDate).format("DD.MM.YYYY HH:MM")}.</Style.Date>
-                    {user && user.role >= UsersRoles.Editor && (
-                        <StateButton bool={!data.confirmed}>{data.confirmed ? "Un confirmed" : "Confirmed"}</StateButton>
+                    <Style.Date>{getLocalDate(data.creationDate)}. Creator: {data.creatorNickname}</Style.Date>
+                    {user && user.role === UsersRoles.Admin && user.confirmed && (
+                        <StateButton 
+                            bool={!data.confirmed}
+                            onPress={() => changeNewsState(!data.confirmed)}
+                        >
+                                {data.confirmed ? "Un confirm" : "Confirm"}
+                       </StateButton>
                     )}
                   </>
                 )}
@@ -49,39 +83,41 @@ export const DetailedNews = ({ route }: any) => {
             <Style.Block>
                 <Text title>Comments</Text>
                 {comments && comments.map((i) => (
-                    <Style.Comment key={Math.random() * 1000}>
+                    <Style.Comment view={getConfirmed(i.confirmed, user)} key={Math.random() * 1000}>
                         <Text fs={20} title>{i.nickname}</Text>
                         <Text text fs={16}>{i.text}</Text>
-                        <Style.Date>{moment(i.creationDate).format("DD.MM.YYYY HH:MM")}.</Style.Date>
-                        {user && user.role >= UsersRoles.Editor && (                        
+                        <Style.Date>{getLocalDate(i.creationDate)}.</Style.Date>
+                        {user && user.role >= UsersRoles.Editor && user.confirmed && (                        
                             <StateButton bool={!i.confirmed}>{i.confirmed ? "Un show" : "Show"}</StateButton>
                         )}
                     </Style.Comment>
                 ))}
-                <Style.AddComment>
-                    <Input 
-                        placeholder="Enter your nickname"
-                        state={nickname}  
-                        setState={setNickname}
-                    />
-                    <Input 
-                        placeholder="Enter your email" 
-                        state={email} 
-                        setState={setEmail}
-                        pattern={Regex.email}
-                    />
-                    <Input 
-                        placeholder="Enter your comment" 
-                        state={comment}
-                        setState={setComment}
-                    />
-                    <Button 
-                        wd={"100%"}
-                        onPress={handleSend} 
-                    >
-                        SEND
-                    </Button>
-                </Style.AddComment>
+                {(!user || user.role === UsersRoles.User || !user.confirmed) && (
+                    <Style.AddComment>
+                        <Input 
+                            placeholder="Enter your nickname"
+                            state={nickname}  
+                            setState={setNickname}
+                        />
+                        <Input 
+                            placeholder="Enter your email" 
+                            state={email} 
+                            setState={setEmail}
+                            pattern={Regex.email}
+                        />
+                        <Input 
+                            placeholder="Enter your comment" 
+                            state={text}
+                            setState={setText}
+                        />
+                        <Button 
+                            wd={"100%"}
+                            onPress={handleSend} 
+                        >
+                            SEND
+                        </Button>
+                    </Style.AddComment>
+                )}
             </Style.Block>
         </ViewScroll>
     );

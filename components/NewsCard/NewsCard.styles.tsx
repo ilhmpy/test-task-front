@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Card = styled.TouchableOpacity`
+export const Card = styled.TouchableOpacity<{ confirmed: boolean; }>`
     width: 100%;
     max-height: 300px; 
     max-width: 300px;
@@ -9,6 +9,10 @@ export const Card = styled.TouchableOpacity`
     background: #fff;
     border-radius: 3px;
     padding: 20px;
+    display: none;
+    ${({ confirmed }) => confirmed && `
+        display: flex;
+    `}
 `;   
 
 export const Date = styled.Text`
