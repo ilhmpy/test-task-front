@@ -22,7 +22,7 @@ export const AuthScreen = ({ navigation }: any) => {
                     if (!res.data.hasOwnProperty("error")) {
                         await SecureStore.setItemAsync("token", res.data.token);
                         navigation.navigate("News");
-                        setReload(true);
+                        setReload(true); 
                         setReloadNews(true);
                     };
                 })

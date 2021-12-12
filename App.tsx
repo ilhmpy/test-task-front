@@ -20,7 +20,7 @@ const Stack = createStackNavigator();
 export default function App() {
   const [user, setUser] = useState<UsersViewModel | null>(null);
   const [nav, setNav] = useState<boolean>(false);
-  const [reload, setReload] = useState<boolean>(false);
+  const [reload, setReload] = useState<boolean>(true);
   const [reloadNews, setReloadNews] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState(true);
   const [load, setLoad] = useState<boolean>(false);
@@ -29,6 +29,7 @@ export default function App() {
     const token = await SecureStore.getItemAsync("token") || null;
     console.log("Token", token);
     if (token) {
+      console.log(token);
       setLoad(true);
       axios.get(`${URL}GetAuth?Token=${token}`)     
         .then((res) => { 
@@ -55,26 +56,21 @@ export default function App() {
   };  
 
   // deleteToken();
-
-  /* 
-    если пользователь захочет сначала отфильтровать по одной дате и затем сразу по другой без сброса фильтров 
-    - ничего не отобразится так как данные уже отфильтрованны раннее
-    сделать страницу "ожидайте подтверждения администратора/вы заблокированы"
-  */
   
   useEffect(() => {   
-    GetAuth();
+    if (reload === true) {
+      GetAuth();
+    };
   }, [reload]); 
   
   return (  
     <>
       <AppContext.Provider value={{ 
-        user, 
-        setReload, 
-        reload,
+        user,
         reloadNews,
         setReloadNews,
         setUser,
+        setReload
       }}>
         {load ? <Spinner /> : (
           <NavigationContainer>  

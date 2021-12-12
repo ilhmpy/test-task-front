@@ -12,7 +12,7 @@ import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
 import { NoItems } from "../../components/NoItems/NoItems";
  
 export const NewsScreen = ({ navigation }: any) => {
-    const { user, setReload, setReloadNews } = useContext(AppContext);
+    const { user, GetAuth, setReloadNews } = useContext(AppContext);
     const [defaultNews, setDefaultNews] = useState<NewsViewModel[] | null>(null);
     const [news, setNews] = useState<NewsViewModel[] | null>(null);
     const [clear, setClear] = useState<boolean>(false);  
@@ -46,6 +46,7 @@ export const NewsScreen = ({ navigation }: any) => {
     useEffect(() => {
         const focus = navigation.addListener("focus", (focus: any) => {
             setIsFocused(true);
+            // setReload(true);
             console.log("Focus", focus);
         }); 
         return focus;

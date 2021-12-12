@@ -21,13 +21,13 @@ export const RegScreen = ({ navigation }: any) => {
                 setSign(true);
                 navigation.navigate("Confirm");
             }).catch((e) => console.log(e));
-        };
+        }; 
     };
 
     return (
         <ViewScroll>
             <MarginContainer>
-                <Sign view={sign}>You sign up! (you will be redirect on news page...)</Sign>
+                <Sign view={sign}>You sign up!</Sign>
                 <Input 
                     placeholder="Enter your nickname" 
                     state={nickname}
