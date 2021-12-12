@@ -14,7 +14,7 @@ import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
 
 export const AdminScreen = ({ navigation }: any) => {
     const [editors, setEditors] = useState<UsersViewModel[] | null>(null);
-    const { user } = useContext(AppContext);
+    const { user, setReload } = useContext(AppContext);
     const [isFocused, setIsFocused] = useState(true);
 
     async function GetEditors() {
@@ -24,7 +24,8 @@ export const AdminScreen = ({ navigation }: any) => {
                 .then((res) => { 
                     console.log("GetEditors", res.data, token);
                     setEditors((sortByDate(res.data)).filter((i) => i.nickname != user.nickname));
-                }).catch((err) => console.log(err));
+                }).catch((err) => console.log(err))
+                .finally(() => setIsFocused(false));
         };  
     };
 

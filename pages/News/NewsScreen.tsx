@@ -16,11 +16,10 @@ type NewsScreenProps = {
 };    
  
 export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
-    const { user, reloadNews, setReloadNews } = useContext(AppContext);
+    const { user, setReload, setReloadNews } = useContext(AppContext);
     const [defaultNews, setDefaultNews] = useState<NewsViewModel[] | null>(null);
     const [news, setNews] = useState<NewsViewModel[] | null>(null);
-    const [clear, setClear] = useState<boolean>(false); 
-    const [reload, setReload] = useState<boolean>(false);  
+    const [clear, setClear] = useState<boolean>(false);  
     const [isFocused, setIsFocused] = useState(true);
  
     function GetNews() {
@@ -28,19 +27,19 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
         .then((res) => {
             console.log("GetNews", res.data);
             const sort = sortByDate(res.data)
-            const filter = sort.filter((i) => i.creatorId == user.id);
+            let filter = sort;
             if (user?.role === UsersRoles.Editor) {
-                setNews(filter);
-            } else {
-                setNews(sort);
-            }; 
-            setDefaultNews(res.data);
+                filter = filter.filter((i) => i.creatorId === user.id);
+            };
+            console.log(filter, user);
+            setNews(filter);
+            setDefaultNews(filter);
         })
         .catch((err) => console.log(err))
         .finally(() => {
             setIsFocused(false);
         });
-    };
+    }; 
 
     useEffect(() => {
         if (isFocused) {
@@ -51,6 +50,7 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
     useEffect(() => {
         const focus = navigation.addListener("focus", (focus: any) => {
             setIsFocused(true);
+            console.log("Focus", focus);
         }); 
         return focus;
     }, [isFocused]);
@@ -82,7 +82,7 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
                 {(user?.role === UsersRoles.Editor && user?.confirmed) && (
                     <AddPost setReload={setReloadNews} />
                 )}
-                {news.length === 0 && news != null ? <NoItems /> : (
+                {news?.length === 0 && news != null ? <NoItems /> : (
                     <>
                          {news?.map((item) => (
                             <NewsCard 

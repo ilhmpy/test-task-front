@@ -9,8 +9,8 @@ import * as SecureStore from 'expo-secure-store';
 import { ViewScroll } from "../../GlobalStyles";
 
 export const AuthScreen = ({ navigation }: any) => {
-    const [nickname, setNickname] = useState<string | undefined>();
-    const [password, setPassword] = useState<string | undefined>();
+    const [nickname, setNickname] = useState<string | null>(null);
+    const [password, setPassword] = useState<string | null>(null);
     const [error, setError] = useState<boolean>(false);
     const { setReload, setReloadNews } = useContext(AppContext);
 

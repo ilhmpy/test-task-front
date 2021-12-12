@@ -29,7 +29,7 @@ export const Input = ({
                 setError(current == null);
             };
         };
-        setState(val);
+        setState(val.replace(" ", "").toLowerCase());
         onChange && onChange();
     };
     
