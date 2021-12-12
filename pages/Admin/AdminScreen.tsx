@@ -12,9 +12,10 @@ import * as SecureStore from 'expo-secure-store';
 import { AppContext } from "../../context/Context";
 import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
 
-export const AdminScreen = () => {
+export const AdminScreen = ({ navigation }: any) => {
     const [editors, setEditors] = useState<UsersViewModel[] | null>(null);
     const { user } = useContext(AppContext);
+    const [isFocused, setIsFocused] = useState(true);
 
     async function GetEditors() {
         const token = await SecureStore.getItemAsync("token");
@@ -28,8 +29,17 @@ export const AdminScreen = () => {
     };
 
     useEffect(() => {
-        GetEditors();
-    }, []); 
+        if (isFocused) {
+            GetEditors();
+        };
+    }, [isFocused]);
+
+    useEffect(() => {
+        const focus = navigation.addListener("focus", (focus: any) => {
+            setIsFocused(true);
+        }); 
+        return focus;
+    }, [isFocused]);
 
     function changeEditorsState(bool: boolean, id: string, type: string, idx: number, data = {}) {
         editors?.forEach((i: any, idx: number) => {

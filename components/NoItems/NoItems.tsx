@@ -14,10 +14,11 @@ export const NoItems = () => {
 const NoItemsContainer = styled.View`
     width: 100%;
     min-height: 800px;
-    justify-content: center;
-    align-items: center;
 `;
 
 const NoItemsText = styled.Text`
-
+    text-align: center;
+    margin-top: 40px;
+    font-size: 16px;
+    color: red;
 `;

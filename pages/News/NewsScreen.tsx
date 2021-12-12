@@ -21,24 +21,39 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
     const [news, setNews] = useState<NewsViewModel[] | null>(null);
     const [clear, setClear] = useState<boolean>(false); 
     const [reload, setReload] = useState<boolean>(false);  
+    const [isFocused, setIsFocused] = useState(true);
  
-    useEffect(() => {
+    function GetNews() {
         axios.get(`${URL}GetNews`)
-            .then((res) => {
-                console.log("GetNews", res.data);
-                const sort = sortByDate(res.data)
-                if (user?.role === UsersRoles.Editor) {
-                    setNews(sort.filter((i) => i.creatorId == user.id));
-                } else {
-                    setNews(sort);
-                }; 
-                setDefaultNews(res.data);
-            })
-            .catch((err) => console.log(err))
-            .finally(() => {
-                setReloadNews(false);
-            });
-    }, [reloadNews]);
+        .then((res) => {
+            console.log("GetNews", res.data);
+            const sort = sortByDate(res.data)
+            const filter = sort.filter((i) => i.creatorId == user.id);
+            if (user?.role === UsersRoles.Editor) {
+                setNews(filter);
+            } else {
+                setNews(sort);
+            }; 
+            setDefaultNews(res.data);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => {
+            setIsFocused(false);
+        });
+    };
+
+    useEffect(() => {
+        if (isFocused) {
+            GetNews();
+        };
+    }, [isFocused]);
+
+    useEffect(() => {
+        const focus = navigation.addListener("focus", (focus: any) => {
+            setIsFocused(true);
+        }); 
+        return focus;
+    }, [isFocused]);
     
     useEffect(() => {
         if (clear) {    
@@ -54,14 +69,10 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
     if (news === null) {
         return <SpinnerComponent />
     };
-
-    if (news !== null && news.length === 0) {
-        return <NoItems />
-    }; 
    
     return (
         <ViewScroll>
-            <Container>
+            <Container>  
                 {(user?.role === UsersRoles.Admin && user?.confirmed) && (
                     <Search 
                         defaultArray={defaultNews} setClear={setClear} 
@@ -71,12 +82,16 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
                 {(user?.role === UsersRoles.Editor && user?.confirmed) && (
                     <AddPost setReload={setReloadNews} />
                 )}
-                {news?.map((i: NewsViewModel ) => (
-                    <NewsCard 
-                        confirmed={getConfirmed(i.confirmed, user)} 
-                        pressHandler={pressHandler} data={i} key={Math.random() * 100} 
-                    />
-                ))}
+                {news.length === 0 && news != null ? <NoItems /> : (
+                    <>
+                         {news?.map((item) => (
+                            <NewsCard 
+                               confirmed={getConfirmed(item.confirmed, user)} 
+                               pressHandler={pressHandler} data={item} key={Math.random() * 100} 
+                            />
+                        ))}
+                    </>
+                )}
             </Container>
         </ViewScroll>
     );
