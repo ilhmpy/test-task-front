@@ -158,17 +158,20 @@ export const DetailedNews = ({ route, navigation }: any) => {
                             placeholder="Enter your nickname"
                             state={nickname}  
                             setState={setNickname}
+                            withSpaces
                         />
                         <Input 
                             placeholder="Enter your email" 
                             state={email} 
                             setState={setEmail}
                             pattern={Regex.email}
+                            withSpaces
                         />
                         <Input 
                             placeholder="Enter your comment" 
                             state={text}
                             setState={setText}
+                            withSpaces
                         />
                         <Button 
                             wd={"100%"}

@@ -6,8 +6,14 @@ import { URL } from "../../consts/port";
 import * as SecureStore from 'expo-secure-store';
 import { AppContext } from "../../context/Context";
 import moment from "moment";
+import { NewsViewModel } from "../../types/news";
 
-export const AddPost = (props: any) => {
+type AddPostProps = {
+    setReload?: any;
+    setState: (val: boolean) => void;
+};
+
+export const AddPost = ({ setReload, setState }: AddPostProps) => {
     const [title, setTitle] = useState<string | null>(null);
     const [description, setDescription] = useState<string | null>(null);
     const { user } = useContext(AppContext);
@@ -16,16 +22,17 @@ export const AddPost = (props: any) => {
        if (description && title && description.length > 0 && title.length > 0) {
             const token = await SecureStore.getItemAsync("token") || null;
             const creationDate = new Date();
-            axios.post(`${URL}InsertNews`, 
-                { token, post: { 
-                        title, description, creatorId: user.id, creatorNickname: user.nickname,
-                        creationDate,
-                    } 
-                }).then((res) => {
+            const post = { 
+                title, description, creatorId: user.id, creatorNickname: user.nickname,
+                creationDate,
+            }; 
+            axios.post(`${URL}InsertNews`, { token, post })
+                .then((res) => {
                     setTitle(null);
                     setDescription(null);
                     console.log(res);
-                    props?.setReload(true);
+                    setReload(true);
+                    setState(true);
                 }).catch((e) => {
                     console.log(e);
                 }); 
@@ -39,12 +46,14 @@ export const AddPost = (props: any) => {
                     placeholder="Title"
                     state={title}
                     setState={setTitle}
+                    withSpaces
                 />
                 <Input 
                     editable
                     placeholder="Text"
                     state={description}
                     setState={setDescription}
+                    withSpaces
                     props={{
                         multiline: true,
                         numberOfLines: 5,

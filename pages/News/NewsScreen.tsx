@@ -77,17 +77,19 @@ export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
                     <Search 
                         defaultArray={defaultNews} setClear={setClear} 
                         state={news} setState={setNews} 
-                    />
+                    /> 
                 )}
                 {(user?.role === UsersRoles.Editor && user?.confirmed) && (
-                    <AddPost setReload={setReloadNews} />
+                    <AddPost setState={setIsFocused} setReload={setReloadNews} />
                 )}
                 {news?.length === 0 && news != null ? <NoItems /> : (
                     <>
                          {news?.map((item) => (
                             <NewsCard 
                                confirmed={getConfirmed(item.confirmed, user)} 
-                               pressHandler={pressHandler} data={item} key={Math.random() * 100} 
+                               pressHandler={pressHandler} data={item} 
+                               key={Math.random() * 100} 
+                               newsConfirmed={item.confirmed}
                             />
                         ))}
                     </>

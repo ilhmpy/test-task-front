@@ -11,13 +11,14 @@ type InputProps = {
     setError?: (val: boolean) => void;
     editable?: boolean;
     props?: any;
+    withSpaces?: boolean;
 };
 
 export const Input = ({ 
     placeholder, setState, state, 
     onChange, pattern, editable, 
     error = false, setError = (val: boolean) => undefined,
-    props,
+    props, withSpaces = false
 }: InputProps) => {
     const changeText = (val: string) => {
         if (val.length > 0) {
@@ -29,7 +30,7 @@ export const Input = ({
                 setError(current == null);
             };
         };
-        setState(val.replace(" ", "").toLowerCase());
+        setState(!withSpaces ? val.replace(" ", "").toLowerCase() : val);
         onChange && onChange();
     };
     

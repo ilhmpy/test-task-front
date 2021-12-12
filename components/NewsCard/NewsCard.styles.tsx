@@ -20,3 +20,12 @@ export const Date = styled.Text`
     font-size: 13px;
     color: #ccc;
 `;
+
+export const Confirmed = styled.Text<{ confirm: boolean; }>`
+    font-size: 13px;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-weight: 600;
+    color: ${({ confirm }) => confirm ? "green" : "red"};
+`;

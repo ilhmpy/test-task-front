@@ -55,7 +55,13 @@ export default function App() {
     await SecureStore.deleteItemAsync("token");
   };  
 
-  // deleteToken()
+  // deleteToken();
+
+  /* 
+    если пользователь захочет сначала отфильтровать по одной дате и затем сразу по другой без сброса фильтров 
+    - ничего не отобразится так как данные уже отфильтрованны раннее
+    сделать страницу "ожидайте подтверждения администратора/вы заблокированы"
+  */
   
   useEffect(() => {   
     GetAuth();
@@ -69,6 +75,7 @@ export default function App() {
         reload,
         reloadNews,
         setReloadNews,
+        setUser,
       }}>
         {load ? <Spinner /> : (
           <NavigationContainer>  

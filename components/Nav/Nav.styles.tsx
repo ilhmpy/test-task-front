@@ -27,3 +27,12 @@ export const Nickname = styled.Text`
     top: 35px;
     font-size: 13px;
 `;
+
+export const LogOut = styled.Text`
+    color: #fff;
+    text-transform: uppercase;
+    position: absolute; 
+    bottom: 15px;
+    right: 15px;
+    font-size: 13px;
+`;

@@ -5,25 +5,28 @@ import { Container, Select, Input, Button2 as Button } from "../index";
 import { Regex } from "../../consts/regex";
 
 type SearchProps = {
-    state: NewsViewModel[] | undefined;
-    setState: (val: NewsViewModel[] | undefined) => void;
+    state: NewsViewModel[] | null;
+    setState: (val: NewsViewModel[] | null) => void;
     setClear: (val: boolean) => void;
-    defaultArray: NewsViewModel[];
+    defaultArray: NewsViewModel[] | null;
 };
 
 export const Search = ({ state, setState, setClear, defaultArray }: SearchProps) => {
     const [switchData, setSwitchData] = useState<boolean | null>(null);
-    const [date, setDate] = useState<string | undefined>();
+    const [date, setDate] = useState<string | null>(null);
     const [notCorrect, setNotCorrect] = useState<boolean>(false);
 
     function filters(data: NewsViewModel[] = []) {
         let filterData = data.length > 0 ? data : state;
         if (date && !notCorrect) {
             const match = date.match(Regex.date);
-            const now = match && new Date(match[3], match[2] - 1, match[1], 0, 0, 0);
             filterData = filterData?.filter((i) => {
-                const totalSeconds = now?.getTime() / 1000;
-                const totalSecondsI = new Date(i.creationDate).getTime() / 1000;
+                const dt = new Date(i.creationDate);
+                const now = match && new Date(
+                    match[3], match[2] - 1, match[1], dt.getHours(), dt.getMinutes(), dt.getSeconds(), dt.getMilliseconds()
+                );
+                const totalSeconds = (now?.getTime() / 1000);
+                const totalSecondsI = (dt.getTime() / 1000);
                 if (totalSeconds === totalSecondsI) {
                     return i;
                 };
@@ -43,7 +46,7 @@ export const Search = ({ state, setState, setClear, defaultArray }: SearchProps)
     const handleClear = () => {
         setClear(true);
         setSwitchData(null);
-        setDate(undefined);
+        setDate(null);
         setNotCorrect(false);
     };
 
