@@ -10,6 +10,7 @@ import axios from "axios";
 import { URL } from "../../consts/port";
 import * as SecureStore from 'expo-secure-store';
 import { AppContext } from "../../context/Context";
+import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
 
 export const AdminScreen = () => {
     const [editors, setEditors] = useState<UsersViewModel[] | null>(null);
@@ -61,8 +62,12 @@ export const AdminScreen = () => {
                 changeEditorsState(bool, id, type, idx, { role: bool ? UsersRoles.Editor : UsersRoles.User });
             }).catch((err) => {
                 console.log(err);
-            });
+            }); 
         };
+    };
+
+    if (editors === null) {
+        return <SpinnerComponent />
     };
 
     return (

@@ -11,6 +11,7 @@ import { URL } from "../../consts/port";
 import * as SecureStore from 'expo-secure-store';
 import { getLocalDate } from "../../utils/getLocalDate";
 import { getConfirmed } from "../../utils/getConfirmed";
+import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
 
 export const DetailedNews = ({ route, navigation }: any) => {
     const { id } = route.params;
@@ -50,11 +51,11 @@ export const DetailedNews = ({ route, navigation }: any) => {
                     setData(data);
                     setComments(data.comments);
                 } else {
-                    navigation.goBack();
+                    navigation.navigate("News");
                 };
             }).catch((err) => {
                 console.log(err);
-                navigation.goBack();
+                navigation.navigate("News");
             });
     }, []); 
 
@@ -77,7 +78,7 @@ export const DetailedNews = ({ route, navigation }: any) => {
             axios.post(`${URL}DeleteNews`, { token, id })
                 .then((res) => {
                     console.log(res);
-                    navigation.goBack();
+                    navigation.navigate("News");
                 }).catch((err) => {
                     console.log(err);
                 });
@@ -100,6 +101,11 @@ export const DetailedNews = ({ route, navigation }: any) => {
                     console.log(err);
                 });
         };  
+    };
+
+    
+    if (data === null) {
+        return <SpinnerComponent />
     };
 
     return (

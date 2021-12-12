@@ -18,15 +18,15 @@ export const AuthScreen = ({ navigation }: any) => {
         if (!error) {
             axios.post(`${URL}AuthUser`, { nickname: nickname?.toLowerCase(), password: password?.toLowerCase() })
                 .then(async (res) => {
-                    console.log("AuthUser", res.data.token);
+                    console.log("AuthUser", res.data);
                     if (!res.data.hasOwnProperty("error")) {
                         await SecureStore.setItemAsync("token", res.data.token);
                         navigation.navigate("News");
                         setReload(true);
                         setReloadNews(true);
-                    }; 
+                    };
                 })
-                .catch((e) => console.log(e));
+                .catch((e) => console.log("AuthError", e));
         };
     };
 
