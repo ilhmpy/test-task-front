@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AppContext } from "./context/Context";
-import { Nav } from './components/index';
+import { Nav, Spinner } from './components/index';
 import { URL } from './consts/port';
 import axios from 'axios';
 import { UsersViewModel } from './types/users';
 import * as SecureStore from 'expo-secure-store';
-import { Spinner } from './components/Spinner/Spinner';
 
 // screens
 import { 
   NewsScreen, AuthScreen, 
-  DetailedNews, RegScreen,
-  AdminScreen 
+  DetailedNews, ConfirmPage,
+  AdminScreen, RegScreen
 } from "./pages/index"; 
    
 const Stack = createStackNavigator(); 
@@ -71,7 +70,7 @@ export default function App() {
     <>
       <AppContext.Provider value={{ 
         user, 
-        setReload,
+        setReload, 
         reload,
         reloadNews,
         setReloadNews,
@@ -103,10 +102,15 @@ export default function App() {
                 component={RegScreen}
                 options={{ title: "Sign up"}}
               />
-
+ 
               <Stack.Screen 
                 name="Admin" 
                 component={AdminScreen} 
+              />  
+
+              <Stack.Screen 
+                name="Confirm"
+                component={ConfirmPage}
               />
             </Stack.Navigator> 
           </NavigationContainer>

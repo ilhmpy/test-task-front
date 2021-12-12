@@ -1,13 +1,15 @@
 import { NewsScreen } from "./News/NewsScreen";
 import { AuthScreen } from "./Auth/AuthScreen";
 import { DetailedNews } from "./DetailedNews/DetailedNews";
-import { RegScreen } from "./Reg/RegScreen";
+import { ConfirmPage } from "./ConfirmPage/ConfirmPage";
 import { AdminScreen } from "./Admin/AdminScreen";
+import { RegScreen } from "./Reg/RegScreen";
 
-export { 
+export {  
     NewsScreen, 
     AuthScreen, 
     DetailedNews,
-    RegScreen, 
-    AdminScreen 
+    ConfirmPage, 
+    AdminScreen,
+    RegScreen,
 };

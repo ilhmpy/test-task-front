@@ -6,7 +6,7 @@ import axios from "axios";
 import { URL } from "../../consts/port";
 import { ViewScroll } from "../../GlobalStyles";
 
-export const RegScreen = () => {
+export const RegScreen = ({ navigation }: any) => {
     const [nickname, setNickname] = useState<string | undefined>();
     const [password, setPassword] = useState<string | undefined>();
     const [error, setError] = useState<boolean>(false);
@@ -19,6 +19,7 @@ export const RegScreen = () => {
             }).then((res) => {
                 console.log(res); 
                 setSign(true);
+                navigation.navigate("Confirm");
             }).catch((e) => console.log(e));
         };
     };
@@ -26,7 +27,7 @@ export const RegScreen = () => {
     return (
         <ViewScroll>
             <MarginContainer>
-                <Sign view={sign}>You sign up!</Sign>
+                <Sign view={sign}>You sign up! (you will be redirect on news page...)</Sign>
                 <Input 
                     placeholder="Enter your nickname" 
                     state={nickname}

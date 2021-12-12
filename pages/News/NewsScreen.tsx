@@ -10,12 +10,8 @@ import { sortByDate } from "../../utils/sortByDate";
 import { getConfirmed } from "../../utils/getConfirmed";
 import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
 import { NoItems } from "../../components/NoItems/NoItems";
-
-type NewsScreenProps = {
-    navigation: any; 
-};    
  
-export const NewsScreen: FC<NewsScreenProps> = ({ navigation }: any) => {
+export const NewsScreen = ({ navigation }: any) => {
     const { user, setReload, setReloadNews } = useContext(AppContext);
     const [defaultNews, setDefaultNews] = useState<NewsViewModel[] | null>(null);
     const [news, setNews] = useState<NewsViewModel[] | null>(null);
