@@ -1,17 +1,14 @@
 import React, { useState, useContext, useEffect } from "react";
 import * as Style from "./DetailedNews.styles";
 import { ViewScroll } from "../../GlobalStyles";
-import { Text, Input, Button2 as Button, StateButton } from "../../components";
-import { NewsViewModel, NewsCommentModel } from "../../types/news";
+import { Text, Input, Button2 as Button, StateButton, Spinner as SpinnerComponent } from "../../components";
 import { Regex } from '../../consts/regex';
 import { AppContext } from "../../context/Context";
-import { UsersRoles } from "../../types/users";
+import { UsersRoles, NewsViewModel, NewsCommentModel } from "../../types";
 import axios from "axios";
 import { URL } from "../../consts/port";
 import * as SecureStore from 'expo-secure-store';
-import { getLocalDate } from "../../utils/getLocalDate";
-import { getConfirmed } from "../../utils/getConfirmed";
-import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
+import { getLocalDate, getConfirmed } from "../../utils";
 
 export const DetailedNews = ({ route, navigation }: any) => {
     const { id } = route.params;
@@ -23,83 +20,85 @@ export const DetailedNews = ({ route, navigation }: any) => {
     const [text, setText] = useState<string | null>(null);
     const [view, setView] = useState<boolean>(false);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if ((text && text.length > 0) && (email && email.length > 0) && (nickname && nickname.length > 0)) {
-            const creationDate = new Date();
-            const data = { 
-                text, email, nickname, newsId: id, 
-                creatorId: user ? user.id : null, creationDate
-            };
-            axios.post(`${URL}InsertComment`, data).then((res) => {
+            try {
+                const creationDate = new Date();
+                const data = { 
+                    text, email, nickname, newsId: id, 
+                    creatorId: user ? user.id : null, creationDate
+                };
+                const req = await axios.post(`${URL}InsertComment`, data);
+                const res = req.data;
                 console.log(res);
                 setComments([...comments, data]);
                 setNickname(null);
                 setEmail(null);
                 setText(null);
                 setView(true);
-                setReloadNews(true);
-            }).catch((e) => console.log(e));
+            } catch(e) {
+                console.log(e);
+            };
         };
     };  
 
     useEffect(() => {
-        axios.get(`${URL}GetNews?id=${id}`)
-            .then((res) => {
+        const get = async () => {
+            try {
+                const req = await axios.get(`${URL}GetNews?id=${id}`);
+                const res = await req.data;
                 console.log("GetNewsById", res);
-                if (res.data.length > 0) {      
-                    const data: NewsViewModel = res.data[0];          
+                if (res.length > 0) {      
+                    const data: NewsViewModel = res[0];          
                     setData(data);
                     setComments(data.comments);
                 } else {
                     navigation.navigate("News");
                 };
-            }).catch((err) => {
-                console.log(err);
+            } catch(e) {
+                console.log(e);
                 navigation.navigate("News");
-            });
+            };
+        };
+        get();
     }, []); 
 
-    async function changeNewsState(confirmed: boolean) {
-        if (user.confirmed && user.role === UsersRoles.Admin) {
-            const token = await SecureStore.getItemAsync("token");
-            axios.post(`${URL}ChangeNewsState`, { id, token, confirmed })
-                .then((res) => {
-                    console.log(res);
-                    setData({ ...data, confirmed });
-                }).catch((err) => {
-                    console.log(err);
-                });
+    const changeNewsState = async (confirmed: boolean) => {
+        if (user?.confirmed && user?.role === UsersRoles.Admin) {
+            try {
+                const token = await SecureStore.getItemAsync("token");
+                const req = await axios.post(`${URL}ChangeNewsState`, { id, token, confirmed })
+                const res = await req.data;
+                console.log(res);
+                setData({ ...data, confirmed });
+            } catch(e) {
+                console.log(e);
+            };
         };
     };
 
-    async function handleDelete() {
-        if (user.confirmed && user.role >= UsersRoles.Editor) {
+    const handleDelete = async () => {
+        if (user?.confirmed && user?.role >= UsersRoles.Editor) {
             const token = await SecureStore.getItemAsync("token");
-            axios.post(`${URL}DeleteNews`, { token, id })
-                .then((res) => {
-                    console.log(res);
-                    navigation.navigate("News");
-                }).catch((err) => {
-                    console.log(err);
-                });
+            await axios.post(`${URL}DeleteNews`, { token, id })
+            navigation.navigate("News");
         };                                                                                                                                     
     };
 
-    async function handleCommentState(idx: number) {
-        if ((user && user.confirmed) && (user.role >= UsersRoles.Editor)) {
-            console.log("yes");
-            const token = await SecureStore.getItemAsync("token");
-            axios.post(`${URL}ChangeCommentState`, { token, id, idx, confirmed: !(comments[idx].confirmed) })
-                .then((res) => {
-                    console.log(res);
-                    if (res.data) {
-                        console.log(res.data.comments[idx]);
-                        comments[idx] = res.data.comments[idx];
-                        setComments([...comments]);
-                    }; 
-                }).catch((err) => {
-                    console.log(err);
-                });
+    const handleCommentState = async (idx: number) => {
+        if ((user?.confirmed) && (user?.role >= UsersRoles.Editor)) {
+            try {
+                const token = await SecureStore.getItemAsync("token");
+                const req = await axios.post(`${URL}ChangeCommentState`, { token, id, idx, confirmed: !(comments[idx].confirmed) })
+                const res = await req.data;
+                if (res) {
+                    console.log(res.comments[idx]);
+                    comments[idx] = res.comments[idx];
+                    setComments([...comments]);
+                }; 
+            } catch(e) {
+                console.log(e);
+            };
         };  
     };
 

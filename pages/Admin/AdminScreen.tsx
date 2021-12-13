@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, Text, StateButton } from "../../components";
-import { UsersViewModel, UsersRoles } from "../../types/users";
+import { Container, Text, StateButton, Spinner as SpinnerComponent } from "../../components";
+import { UsersViewModel, UsersRoles } from "../../types";
 import { ViewScroll } from "../../GlobalStyles";
-import { sortByDate } from "../../utils/sortByDate";
+import { sortByDate } from "../../utils";
 import * as Style from "./AdminScreen.styles";
 import moment from "moment";
 import { roles } from "../../consts/viewArrays";
@@ -10,23 +10,26 @@ import axios from "axios";
 import { URL } from "../../consts/port";
 import * as SecureStore from 'expo-secure-store';
 import { AppContext } from "../../context/Context";
-import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
 
 export const AdminScreen = ({ navigation }: any) => {
     const [editors, setEditors] = useState<UsersViewModel[] | null>(null);
     const { user, setReload } = useContext(AppContext);
     const [isFocused, setIsFocused] = useState(true);
 
-    async function GetEditors() {
-        const token = await SecureStore.getItemAsync("token");
-        if (token) {
-            axios.get(`${URL}GetEditors?token=${token}`)
-                .then((res) => { 
-                    console.log("GetEditors", res.data, token);
-                    setEditors((sortByDate(res.data)).filter((i) => i.nickname != user.nickname));
-                }).catch((err) => console.log(err))
-                .finally(() => setIsFocused(false));
-        };  
+    const GetEditors = async () => {
+        try {
+            const token = await SecureStore.getItemAsync("token");
+            if (token) {
+                const req = await axios.get(`${URL}GetEditors?token=${token}`);
+                const res = await req.data;
+                console.log("GetEditors", res, token);
+                setEditors((sortByDate(res)).filter((i) => i.nickname != user?.nickname));
+            };
+        } catch(e) {
+            console.log(e);
+        } finally {
+            setIsFocused(false)
+        };
     };
 
     useEffect(() => {
@@ -52,28 +55,28 @@ export const AdminScreen = ({ navigation }: any) => {
         });
     }; 
 
-    async function changeEditorBlocked(type: "block" | "confirm", bool: boolean, id: string, idx: number) {
+    const changeEditorBlocked = async (type: "block" | "confirm", bool: boolean, id: string, idx: number) => {
         const token = await SecureStore.getItemAsync("token");
         if ((user?.role === UsersRoles.Admin) && token) {
-            axios.post(`${URL}ChangeEditorBlocked`, { type, bool, id, token })
-            .then(() => {
+            try {
+                await axios.post(`${URL}ChangeEditorBlocked`, { type, bool, id, token })
                 changeEditorsState(bool, id, type, idx);
-            }).catch((err) => {
-                console.log(err);
-            });
+            } catch(e) {
+                console.log(e);
+            };
         };
     };
 
-    async function changeEditorConfirmed(type: "block" | "confirm", bool: boolean, id: string, idx: number) {
+    const changeEditorConfirmed = async (type: "block" | "confirm", bool: boolean, id: string, idx: number) => {
         console.log(bool);
         const token = await SecureStore.getItemAsync("token");
         if ((user?.role === UsersRoles.Admin) && token) {
-            axios.post(`${URL}ChangeEditorConfirmed`, { type, bool, id, token })
-            .then(() => {
+            try {
+                await axios.post(`${URL}ChangeEditorConfirmed`, { type, bool, id, token })
                 changeEditorsState(bool, id, type, idx, { role: bool ? UsersRoles.Editor : UsersRoles.User });
-            }).catch((err) => {
-                console.log(err);
-            }); 
+            } catch(e) {
+                console.log(e);
+            };
         };
     };
 

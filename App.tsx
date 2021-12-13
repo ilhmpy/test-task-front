@@ -1,22 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { AppContext } from "./context/Context";
-import { Nav, Spinner } from './components/index';
-import { URL } from './consts/port';
+import { Spinner } from './components';
+import { URL } from './consts';
 import axios from 'axios';
-import { UsersViewModel } from './types/users';
+import { UsersViewModel } from './types';
 import * as SecureStore from 'expo-secure-store';
-
-// screens
-import { 
-  NewsScreen, AuthScreen, 
-  DetailedNews, ConfirmPage,
-  AdminScreen, RegScreen
-} from "./pages/index"; 
-   
-const Stack = createStackNavigator(); 
-
+import { Navigation } from './Navigation';
+  
 export default function App() {
   const [user, setUser] = useState<UsersViewModel | null>(null);
   const [nav, setNav] = useState<boolean>(false);
@@ -25,33 +15,31 @@ export default function App() {
   const [isFocused, setIsFocused] = useState(true);
   const [load, setLoad] = useState<boolean>(false);
 
-  async function GetAuth() { 
-    const token = await SecureStore.getItemAsync("token") || null;
-    console.log("Token", token);
-    if (token) {
-      console.log(token);
-      setLoad(true);
-      axios.get(`${URL}GetAuth?Token=${token}`)     
-        .then((res) => { 
-          console.log("Context GetAuth", res);
-          if (!res.data.hasOwnProperty("error") && res.data) {
-            setUser(res.data);
-          } else {  
-            setUser(null);       
+  const GetAuth = async () => { 
+        try {
+          const token = await SecureStore.getItemAsync("token") || null;
+          if (token) {
+            setLoad(true);      
+            console.log("Token", token);
+            const req = await axios.get(`${URL}GetAuth?Token=${token}`);
+            const res = await req.data;
+            console.log("Context GetAuth", res);
+            if (!res?.hasOwnProperty("error") && res) {
+              setUser(res);
+            } else {  
+              setUser(null);       
+            };
           };
-        })       
-        .catch((er) => {
-          console.error(er) 
-          setUser(null); 
-        })
-        .finally(() => {
+        } catch(e) {
+          console.error(e)  
+          setUser(null);  
+        } finally {
           setReload(false);
           setLoad(false);
-        });
-    };
+        };
   };     
 
-  async function deleteToken() {
+  const deleteToken = async () => {
     await SecureStore.deleteItemAsync("token");
   };  
 
@@ -72,45 +60,7 @@ export default function App() {
         setUser,
         setReload
       }}>
-        {load ? <Spinner /> : (
-          <NavigationContainer>  
-            <Nav nav={nav} setNav={setNav} />
-            <Stack.Navigator>
-              <Stack.Screen 
-                name="News"
-                component={NewsScreen}
-              />
-
-              <Stack.Screen 
-                name="Auth"
-                component={AuthScreen}
-                options={{ title: "Sign In"}}
-              />
-
-              <Stack.Screen 
-                name="NewsDetails"
-                component={DetailedNews}
-                options={{ title: "News details"}}
-              />
-
-              <Stack.Screen 
-                name="Reg"
-                component={RegScreen}
-                options={{ title: "Sign up"}}
-              />
- 
-              <Stack.Screen 
-                name="Admin" 
-                component={AdminScreen} 
-              />  
-
-              <Stack.Screen 
-                name="Confirm"
-                component={ConfirmPage}
-              />
-            </Stack.Navigator> 
-          </NavigationContainer>
-        )}
+        {load ? <Spinner /> : <Navigation />}
       </AppContext.Provider>
     </>
   );

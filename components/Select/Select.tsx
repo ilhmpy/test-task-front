@@ -8,7 +8,7 @@ type SelectProps = {
 };
 
 export const Select = ({ array, setState, state }: SelectProps) => {
-    function handleSelect(val: string) {
+    const handleSelect = (val: string) => {
         setState(val === "Confirmed");
     };
 

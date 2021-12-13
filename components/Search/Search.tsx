@@ -1,8 +1,8 @@
 import * as Style from "./Search.styles";
 import React, { useState, useEffect } from "react";
-import { NewsViewModel } from "../../types/news";
+import { NewsViewModel } from "../../types";
 import { Container, Select, Input, Button2 as Button } from "../index";
-import { Regex } from "../../consts/regex";
+import { Regex } from "../../consts";
 
 type SearchProps = {
     state: NewsViewModel[] | null;
@@ -16,7 +16,7 @@ export const Search = ({ state, setState, setClear, defaultArray }: SearchProps)
     const [date, setDate] = useState<string | null>(null);
     const [notCorrect, setNotCorrect] = useState<boolean>(false);
 
-    function filters(data: NewsViewModel[] = []) {
+    const filters = (data: NewsViewModel[] = []) => {
         let filterData = data.length > 0 ? data : state;
         if (date && !notCorrect) {
             const match = date.match(Regex.date);

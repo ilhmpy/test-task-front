@@ -1,25 +1,22 @@
 import React, { useContext } from "react";
 import * as Style from "./Nav.styles";
 import { AppContext } from "../../context/Context";
-import { roles } from "../../consts/viewArrays";
-import { UsersRoles } from "../../types/users";
+import { roles, URL } from "../../consts";
+import { UsersRoles } from "../../types";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
-import { URL } from "../../consts/port";
-import { NavigationRouteContext } from "@react-navigation/native";
 
 export const Nav = ({ navigation }: any) => {
     const { user, setUser } = useContext(AppContext);
 
-    async function onLogOut() {
+    const onLogOut = async () => {
         const token = await SecureStore.getItemAsync("token");
-        axios.post(`${URL}UnAuth`, { token })
-            .then(async (res) => {
-                console.log("UnAuth", res);
-                setUser(null);
-                navigation.navigate("News");
-                await SecureStore.deleteItemAsync("token");
-            }).catch((err) => console.log("UnAuthError", err)); 
+        const req = await axios.post(`${URL}UnAuth`, { token })
+        const res = await req.data;
+        console.log("UnAuth", res);
+        await SecureStore.deleteItemAsync("token");
+        setUser(null);
+        navigation.navigate("News");
     };
     
     return (

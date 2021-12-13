@@ -1,40 +1,37 @@
-import React, { useContext, FC, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../context/Context";
-import { NewsCard, Container, Search, AddPost } from "../../components";
-import { NewsViewModel } from '../../types/news';
+import { NewsCard, Container, Search, AddPost, Spinner as SpinnerComponent, NoItems } from "../../components";
 import { ViewScroll } from "../../GlobalStyles";
-import { UsersRoles } from "../../types/users";
+import { UsersRoles, NewsViewModel } from "../../types";
 import axios from "axios";
 import { URL } from "../../consts/port";
-import { sortByDate } from "../../utils/sortByDate";
-import { getConfirmed } from "../../utils/getConfirmed";
-import { Spinner as SpinnerComponent } from "../../components/Spinner/Spinner";
-import { NoItems } from "../../components/NoItems/NoItems";
+import { sortByDate, getConfirmed } from "../../utils";
  
 export const NewsScreen = ({ navigation }: any) => {
-    const { user, GetAuth, setReloadNews } = useContext(AppContext);
+    const { user, setReloadNews } = useContext(AppContext);
     const [defaultNews, setDefaultNews] = useState<NewsViewModel[] | null>(null);
     const [news, setNews] = useState<NewsViewModel[] | null>(null);
     const [clear, setClear] = useState<boolean>(false);  
     const [isFocused, setIsFocused] = useState(true);
  
-    function GetNews() {
-        axios.get(`${URL}GetNews`)
-        .then((res) => {
-            console.log("GetNews", res.data);
-            const sort = sortByDate(res.data)
+    const GetNews = async () => {
+        try {
+            const req = await axios.get(`${URL}GetNews`);
+            const res = await req.data;
+            console.log("GetNews", res);
+            const sort = sortByDate(res)
             let filter = sort;
             if (user?.role === UsersRoles.Editor) {
                 filter = filter.filter((i) => i.creatorId === user.id);
-            };
+            };  
             console.log(filter, user);
             setNews(filter);
             setDefaultNews(filter);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => {
+        } catch(e) {
+            console.log(e);
+        } finally {
             setIsFocused(false);
-        });
+        };
     }; 
 
     useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react"
+import React, { useState } from "react"
 import styled from "styled-components";
 import { Input, Button2 as Button } from "../../components";
 import { Regex } from "../../consts/regex";
@@ -12,15 +12,21 @@ export const RegScreen = ({ navigation }: any) => {
     const [error, setError] = useState<boolean>(false);
     const [sign, setSign] = useState<boolean>(false);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!error) {
-            axios.post(`${URL}CreateUser`, {
-                nickname: nickname?.toLowerCase(), password: password?.toLowerCase(), creationDate: new Date()
-            }).then((res) => {
-                console.log(res); 
-                setSign(true);
-                navigation.navigate("Confirm");
-            }).catch((e) => console.log(e));
+            try {
+                const req = await axios.post(`${URL}CreateUser`, {
+                    nickname: nickname?.toLowerCase(), password: password?.toLowerCase(), creationDate: new Date()
+                });
+                const res = await req.data;
+                console.log("CreateUser", res); 
+                if (res.status === 200) {
+                    setSign(true);
+                    navigation.navigate("Confirm");
+                };
+            } catch(e) {
+                console.log(e);
+            };
         }; 
     };
 

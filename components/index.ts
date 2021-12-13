@@ -9,6 +9,7 @@ import { Select } from "./Select/Select";
 import { Button2, StateButton } from "./Button2/Button2";
 import { AddPost } from "./AddPost/AddPost";
 import { Spinner } from "./Spinner/Spinner";
+import { NoItems } from "./NoItems/NoItems";
 
 export { 
     NewsCard, 
@@ -23,4 +24,5 @@ export {
     StateButton,
     AddPost,
     Spinner,
+    NoItems,
 };

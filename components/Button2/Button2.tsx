@@ -1,6 +1,6 @@
 import styled from "styled-components";  
 import React, { ReactNode } from "react";    
-import { Text as TextComponent} from "react-native";
+import { Text as TextComponent } from "react-native";
 
 type ButtonProps = {
     bg?: string; 

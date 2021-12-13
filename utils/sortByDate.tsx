@@ -1,4 +1,4 @@
-export function sortByDate(array: any[]) {
+export const sortByDate = (array: any[]) => {
   return array.sort((x: any, y: any) => {
       const a = new Date(x.creationDate);
       const b = new Date(y.creationDate);

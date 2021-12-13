@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
-import { NewsViewModel } from "../../types/news";
+import { NewsViewModel, UsersRoles } from "../../types";
 import * as Style from "./NewsCard.styles";
 import { Text } from "../../components/index";
-import { getLocalDate } from "../../utils/getLocalDate";
+import { getLocalDate } from "../../utils";
 import { AppContext } from "../../context/Context";
-import { UsersRoles } from "../../types/users";
 
 type NewsCardProps = {
     data: NewsViewModel;
